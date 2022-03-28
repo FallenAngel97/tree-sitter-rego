@@ -5,7 +5,6 @@ module.exports = grammar({
     source_file: $ => repeat($._definition),
 
     _definition: $ => choice(
-      $.function_definition,
       $.package_definition,
       $.import_package,
       $.assignment,
@@ -22,26 +21,26 @@ module.exports = grammar({
         'lower',
       ),
       '(',
-      choice(
+      field('function_body', choice(
         $.identifier,
-        $.array_definition,
+        $._array_definition,
         $.number,
-      ),
+      )),
       ')',
     ),
 
-    string_definition: $ => seq(
+    _string_definition: $ => seq(
       '"',
       $.identifier,
       '"',
     ),
 
-    array_definition: $ => seq(
+    _array_definition: $ => seq(
       '[',
       repeat(
         choice(
-          $.array_definition,
-          $.string_definition,
+          $._array_definition,
+          $._string_definition,
           $.identifier,
           $.number,
           ',',
@@ -54,8 +53,8 @@ module.exports = grammar({
       choice(
         $.identifier,
         $.builtin_function,
-        $.string_definition,
-        $.array_definition,
+        $._string_definition,
+        $._array_definition,
       ),
       choice(
         '==',
@@ -64,20 +63,20 @@ module.exports = grammar({
       choice(
         $.identifier,
         $.builtin_function,
-        $.string_definition,
-        $.array_definition,
+        $._string_definition,
+        $._array_definition,
       ),
     ),
 
     rego_rule: $ => seq(
-      $.identifier,
+      field('rego_rule_name', $.identifier),
       '{',
       repeat(
         choice( 
           $.identifier,
           $.equality_check,
           $.assignment,
-          $.array_definition,
+          $._array_definition,
         ),
       ),
       '}',
@@ -87,74 +86,32 @@ module.exports = grammar({
 
     as_keyword: $ => seq(
       'as',
-      $.identifier,
+      field('package_alias', $.identifier),
     ),
 
     import_package: $ => seq(
       'import',
-      $.identifier,
+      field('imported_package_name', $.identifier),
       optional($.as_keyword),
     ),
 
     package_definition: $ => seq(
       'package',
-      $.identifier
+      field('package_name', $.identifier),
     ),
 
     assignment: $ => seq(
       choice(
         $.identifier,
-        $.array_definition,
-        $.string_definition,
+        $._array_definition,
+        $._string_definition,
       ),
       '=',
       choice(
         $.identifier,
-        $.array_definition,
-        $.string_definition,
+        $._array_definition,
+        $._string_definition,
       ),
-    ),
-
-    function_definition: $ => seq(
-      'func',
-      $.identifier,
-      $.parameter_list,
-      $._type,
-      $.block
-    ),
-
-    parameter_list: $ => seq(
-      '(',
-       // TODO: parameters
-      ')'
-    ),
-
-    _type: $ => choice(
-      'bool'
-      // TODO: other kinds of types
-    ),
-
-    block: $ => seq(
-      '{',
-      repeat($._statement),
-      '}'
-    ),
-
-    _statement: $ => choice(
-      $.return_statement
-      // TODO: other kinds of statements
-    ),
-
-    return_statement: $ => seq(
-      'return',
-      $._expression,
-      ';'
-    ),
-
-    _expression: $ => choice(
-      $.identifier,
-      $.number
-      // TODO: other kinds of expressions
     ),
 
     identifier: $ => /[a-zA-Z._]+/,
