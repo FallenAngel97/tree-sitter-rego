@@ -14,7 +14,7 @@ module.exports = grammar({
       $._junk
     ),
     
-    comment: $ => /\#[\'\/\?a-zA-Z=\-\s]+/,
+    comment: $ => /\#[\'\/\?a-zA-Z=\-\s\(\)]+\n\r?/,
 
     builtin_function: $ => seq(
       choice(

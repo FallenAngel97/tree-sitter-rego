@@ -7,9 +7,25 @@
     "nan": "^2.15.0"
   },
   "scripts": {
-    "generate": "tree-sitter generate"
+    "generate": "tree-sitter generate",
+    "build": "tree-sitter generate && node-gyp configure && node-gyp build"
   },
+  "tree-sitter": [{
+    "scope": "source.rego",
+    "file-types": ["rego"],
+    "highlights": [
+      "queries/highlights.scm"
+    ],
+    "theme": {
+      "rego_rule_name": {
+        "bold": true,
+        "color": "cyan"
+      }
+    },
+    "injection-regex": "rego"
+  }],
   "devDependencies": {
+    "node-gyp": "^9.0.0",
     "tree-sitter-cli": "^0.20.6"
   }
 }
