@@ -32,6 +32,8 @@ module.exports = grammar({
       'is_string',
       'object.get',
       'print',
+      'concat',
+      'contains',
     ),
 
     opening_parameter: $ => '(',
@@ -61,7 +63,7 @@ module.exports = grammar({
 
     string_definition: $ => seq(
       '"',
-      /[a-zA-Z0-9\-._:\s]*/,
+      /[a-zA-Z0-9<>@\-._:=\s\/\\]*/,
       '"',
     ),
 
@@ -116,10 +118,21 @@ module.exports = grammar({
       ),
     ),
 
-    rego_rule: $ => choice(
+    rego_rule: $ => prec(1, choice(
       $.identifier,
       $.operator_check,
       $.array_definition,
+      $.test_case,
+    ),),
+
+    test_case: $ => seq(
+      $.identifier,
+      repeat(
+        seq(
+          $.reserved_keywords,
+          $.identifier,
+        ),
+      ),
     ),
 
     rego_block: $ => seq(
@@ -137,8 +150,15 @@ module.exports = grammar({
 
     _junk: $ => /\n/,
 
-    as_keyword: $ => seq(
+    reserved_keywords: $ => choice(
+      'true',
+      'false',
       'as',
+      'with',
+    ),
+    
+    as_keyword: $ => seq(
+      $.reserved_keywords,
       field('package_alias', $.identifier),
     ),
 
