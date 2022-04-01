@@ -60,7 +60,7 @@ module.exports = grammar({
 
     string_definition: $ => seq(
       '"',
-      /[a-zA-Z0-9._:]*/,
+      /[a-zA-Z0-9\-._:]*/,
       '"',
     ),
 

@@ -1,8 +1,6 @@
 ; highlights.scm
 "import" @include
 "package" @include
-"true" @boolean
-"false" @boolean
 
 
 (comment) @comment
@@ -12,3 +10,4 @@
 (closing_parameter) @function.builtin
 (string_definition) @string
 (number) @number
+(operator) @operator
