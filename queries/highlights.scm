@@ -1,10 +1,14 @@
 ; highlights.scm
-"import" @import_package_keyword
-"package" @import_package_keyword
+"import" @include
+"package" @include
+"true" @boolean
+"false" @boolean
 
 
-(comment) @rego_comment
-(rego_block rego_rule_name: (identifier) @rego_rule_name)
-(builtin_function function_name: (function_name) @builtin_function)
-(opening_parameter) @builtin_function
-(closing_parameter) @builtin_function
+(comment) @comment
+(rego_block rego_rule_name: (identifier) @function)
+(builtin_function function_name: (function_name) @function.builtin)
+(opening_parameter) @function.builtin
+(closing_parameter) @function.builtin
+(string_definition) @string
+(number) @number

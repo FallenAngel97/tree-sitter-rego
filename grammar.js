@@ -47,7 +47,7 @@ module.exports = grammar({
           choice(
             $.identifier,
             $.array_definition,
-            $._number,
+            $.number,
             $.object_field,
             $.string_definition,
             $.identifier,
@@ -70,11 +70,10 @@ module.exports = grammar({
     object_field: $ => prec(
       1, 
       seq(
-        $.identifier,
-        $._array_opening,
+        /[a-zA-Z\._]+\[/,
         choice(
           $.identifier,
-          $._number,
+          $.number,
           $.object_field,
           $.string_definition
         ),
@@ -90,7 +89,7 @@ module.exports = grammar({
           $.string_definition,
           $.identifier,
           $.identifier,
-          $._number,
+          $.number,
           $.object_field,
           $.comma,
         ),
@@ -159,7 +158,7 @@ module.exports = grammar({
 
     identifier: $ => /[a-zA-Z\._]+/,
 
-    _number: $ => /\d+/
+    number: $ => /\d+/
   }
 });
 
