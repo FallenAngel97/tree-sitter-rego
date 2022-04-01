@@ -1,5 +1,4 @@
 node_modules
 bindings
-src
 tree-sitter-rego.wasm
-
+build
