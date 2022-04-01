@@ -7,78 +7,131 @@ module.exports = grammar({
     _definition: $ => choice(
       $.package_definition,
       $.import_package,
-      $.assignment,
+      $.operator_check,
       $.comment,
-      $.rego_rule,
+      $.rego_block,
       $.builtin_function,
       $._junk
     ),
+
+    operator: $ => choice(
+      '==',
+      ':=',
+      '=',
+      '!=',
+      '<',
+      '>',
+    ),
+
+    comma: $ => ',',
     
-    comment: $ => /\#[\'\/\?a-zA-Z=\-\s\(\)]+\n\r?/,
+    comment: $ => /\#.*?\n\r?/,
+
+    function_name: $ => choice(
+      'lower',
+      'is_string',
+      'object.get',
+    ),
+
+    opening_parameter: $ => '(',
+
+    closing_parameter: $ => ')',
 
     builtin_function: $ => seq(
-      choice(
-        'lower',
+      field('function_name', 
+        $.function_name
       ),
-      '(',
-      field('function_body', choice(
+      field('opening_parameter', $.opening_parameter),
+      field('function_body', 
+        repeat(
+          choice(
+            $.identifier,
+            $.array_definition,
+            $._number,
+            $.object_field,
+            $.string_definition,
+            $.identifier,
+            $.comma,
+          ),
+        ),
+      ),
+      field('closing_parameter', $.closing_parameter),
+    ),
+
+    string_definition: $ => seq(
+      '"',
+      /[a-zA-Z0-9._:]*/,
+      '"',
+    ),
+
+    _array_opening: $ => '[',
+    _array_closing: $ => ']',
+
+    object_field: $ => prec(
+      1, 
+      seq(
         $.identifier,
-        $._array_definition,
-        $.number,
-      )),
-      ')',
+        $._array_opening,
+        choice(
+          $.identifier,
+          $._number,
+          $.object_field,
+          $.string_definition
+        ),
+        $._array_closing,
+      ),
     ),
 
-    _string_definition: $ => seq(
-      '"',
-      $.identifier,
-      '"',
-    ),
-
-    _array_definition: $ => seq(
-      '[',
+    array_definition: $ => seq(
+      $._array_opening,
       repeat(
         choice(
-          $._array_definition,
-          $._string_definition,
+          $.array_definition,
+          $.string_definition,
           $.identifier,
-          $.number,
-          ',',
+          $.identifier,
+          $._number,
+          $.object_field,
+          $.comma,
         ),
       ),
-      ']',
+      $._array_closing,
     ),
 
-    equality_check: $ => seq(
+    operator_check: $ => seq(
       choice(
         $.identifier,
         $.builtin_function,
-        $._string_definition,
-        $._array_definition,
+        $.string_definition,
+        $.object_field,
+        $.array_definition,
       ),
-      choice(
-        '==',
-        '!=',
-      ),
+      $.operator,
       choice(
         $.identifier,
         $.builtin_function,
-        $._string_definition,
-        $._array_definition,
+        $.string_definition,
+        $.object_field,
+        $.array_definition,
       ),
     ),
 
-    rego_rule: $ => seq(
+    rego_rule: $ => choice(
+      $.identifier,
+      $.operator_check,
+      $.array_definition,
+    ),
+
+    rego_block: $ => seq(
       field('rego_rule_name', $.identifier),
-      '{',
-      repeat(
-        choice( 
+      optional(
+        seq(
+          $.operator,
           $.identifier,
-          $.equality_check,
-          $.assignment,
-          $._array_definition,
         ),
       ),
+      '{',
+        repeat($.rego_rule),
       '}',
     ),
 
@@ -91,7 +144,11 @@ module.exports = grammar({
 
     import_package: $ => seq(
       'import',
-      field('imported_package_name', $.identifier),
+      field('imported_package_name', 
+        choice(
+          $.identifier,
+        ),
+      ),
       optional($.as_keyword),
     ),
 
@@ -100,23 +157,9 @@ module.exports = grammar({
       field('package_name', $.identifier),
     ),
 
-    assignment: $ => seq(
-      choice(
-        $.identifier,
-        $._array_definition,
-        $._string_definition,
-      ),
-      '=',
-      choice(
-        $.identifier,
-        $._array_definition,
-        $._string_definition,
-      ),
-    ),
+    identifier: $ => /[a-zA-Z\._]+/,
 
-    identifier: $ => /[a-zA-Z._]+/,
-
-    number: $ => /\d+/
+    _number: $ => /\d+/
   }
 });
 
