@@ -23,6 +23,9 @@ module.exports = grammar({
       '>',
     ),
 
+    true: $ => 'true',
+    false: $ => 'false',
+
     comma: $ => ',',
     
     comment: $ => /\#.*?\n\r?/,
@@ -50,6 +53,8 @@ module.exports = grammar({
           choice(
             $.identifier,
             $.array_definition,
+            $.true,
+            $.false,
             $.number,
             $.object_field,
             $.string_definition,
@@ -94,6 +99,8 @@ module.exports = grammar({
           $.identifier,
           $.number,
           $.object_field,
+          $.true,
+          $.false,
           $.comma,
         ),
       ),
@@ -107,6 +114,8 @@ module.exports = grammar({
         $.string_definition,
         $.object_field,
         $.array_definition,
+        $.true,
+        $.false,
       ),
       $.operator,
       choice(
@@ -115,6 +124,8 @@ module.exports = grammar({
         $.string_definition,
         $.object_field,
         $.array_definition,
+        $.true,
+        $.false,
       ),
     ),
 
@@ -123,6 +134,8 @@ module.exports = grammar({
       $.operator_check,
       $.array_definition,
       $.test_case,
+      $.true,
+      $.false,
     ),),
 
     test_case: $ => seq(
@@ -151,8 +164,6 @@ module.exports = grammar({
     _junk: $ => /\n/,
 
     reserved_keywords: $ => choice(
-      'true',
-      'false',
       'as',
       'with',
     ),

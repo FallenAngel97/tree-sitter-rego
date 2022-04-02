@@ -16,6 +16,10 @@
           "named": true
         },
         {
+          "type": "false",
+          "named": true
+        },
+        {
           "type": "identifier",
           "named": true
         },
@@ -29,6 +33,10 @@
         },
         {
           "type": "string_definition",
+          "named": true
+        },
+        {
+          "type": "true",
           "named": true
         }
       ]
@@ -87,6 +95,10 @@
             "named": true
           },
           {
+            "type": "false",
+            "named": true
+          },
+          {
             "type": "identifier",
             "named": true
           },
@@ -100,6 +112,10 @@
           },
           {
             "type": "string_definition",
+            "named": true
+          },
+          {
+            "type": "true",
             "named": true
           }
         ]
@@ -206,6 +222,10 @@
           "named": true
         },
         {
+          "type": "false",
+          "named": true
+        },
+        {
           "type": "identifier",
           "named": true
         },
@@ -219,6 +239,10 @@
         },
         {
           "type": "string_definition",
+          "named": true
+        },
+        {
+          "type": "true",
           "named": true
         }
       ]
@@ -287,6 +311,10 @@
           "named": true
         },
         {
+          "type": "false",
+          "named": true
+        },
+        {
           "type": "identifier",
           "named": true
         },
@@ -296,6 +324,10 @@
         },
         {
           "type": "test_case",
+          "named": true
+        },
+        {
+          "type": "true",
           "named": true
         }
       ]
@@ -419,7 +451,7 @@
   },
   {
     "type": "false",
-    "named": false
+    "named": true
   },
   {
     "type": "identifier",
@@ -459,7 +491,7 @@
   },
   {
     "type": "true",
-    "named": false
+    "named": true
   },
   {
     "type": "with",
