@@ -1,0 +1,17 @@
+==================
+Rego alias for package
+==================
+
+package test.alias 
+import additional.package as test_block
+
+---
+
+(source_file
+ (package_definition
+  (identifier))
+ (import_package
+  (identifier)
+  (as_keyword
+   (reserved_keywords)
+   (identifier))))

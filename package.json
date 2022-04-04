@@ -8,7 +8,8 @@
   },
   "scripts": {
     "generate": "tree-sitter generate",
-    "build": "tree-sitter generate && node-gyp configure && node-gyp build"
+    "build": "tree-sitter generate && node-gyp configure && node-gyp build",
+    "test": "tree-sitter test"
   },
   "tree-sitter": [{
     "scope": "source.rego",
