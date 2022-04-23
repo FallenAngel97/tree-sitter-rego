@@ -406,6 +406,18 @@
     "named": false
   },
   {
+    "type": "+",
+    "named": false
+  },
+  {
+    "type": "-",
+    "named": false
+  },
+  {
+    "type": "/",
+    "named": false
+  },
+  {
     "type": ":=",
     "named": false
   },
@@ -454,11 +466,31 @@
     "named": true
   },
   {
+    "type": "http.send",
+    "named": false
+  },
+  {
     "type": "identifier",
     "named": true
   },
   {
     "type": "import",
+    "named": false
+  },
+  {
+    "type": "io.jwt.decode",
+    "named": false
+  },
+  {
+    "type": "io.jwt.encode_sign",
+    "named": false
+  },
+  {
+    "type": "io.jwt.encode_sign_raw",
+    "named": false
+  },
+  {
+    "type": "io.jwt.verify_es256",
     "named": false
   },
   {
@@ -487,6 +519,14 @@
   },
   {
     "type": "print",
+    "named": false
+  },
+  {
+    "type": "strings.replace_n",
+    "named": false
+  },
+  {
+    "type": "time.now",
     "named": false
   },
   {

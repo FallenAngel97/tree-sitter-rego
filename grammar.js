@@ -21,6 +21,9 @@ module.exports = grammar({
       '!=',
       '<',
       '>',
+      '/',
+      '-',
+      '+',
     ),
 
     true: $ => 'true',
@@ -37,6 +40,13 @@ module.exports = grammar({
       'print',
       'concat',
       'contains',
+      'time.now_ns',
+      'io.jwt.encode_sign_raw',
+      'io.jwt.encode_sign',
+      'io.jwt.decode',
+      'io.jwt.verify_es256',
+      'strings.replace_n',
+      'http.send',
     ),
 
     opening_parameter: $ => '(',

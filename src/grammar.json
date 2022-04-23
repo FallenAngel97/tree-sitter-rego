@@ -67,6 +67,18 @@
         {
           "type": "STRING",
           "value": ">"
+        },
+        {
+          "type": "STRING",
+          "value": "/"
+        },
+        {
+          "type": "STRING",
+          "value": "-"
+        },
+        {
+          "type": "STRING",
+          "value": "+"
         }
       ]
     },
@@ -112,6 +124,34 @@
         {
           "type": "STRING",
           "value": "contains"
+        },
+        {
+          "type": "STRING",
+          "value": "time.now"
+        },
+        {
+          "type": "STRING",
+          "value": "io.jwt.encode_sign_raw"
+        },
+        {
+          "type": "STRING",
+          "value": "io.jwt.encode_sign"
+        },
+        {
+          "type": "STRING",
+          "value": "io.jwt.decode"
+        },
+        {
+          "type": "STRING",
+          "value": "io.jwt.verify_es256"
+        },
+        {
+          "type": "STRING",
+          "value": "strings.replace_n"
+        },
+        {
+          "type": "STRING",
+          "value": "http.send"
         }
       ]
     },
