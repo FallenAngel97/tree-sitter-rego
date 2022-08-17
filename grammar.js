@@ -54,11 +54,11 @@ module.exports = grammar({
     closing_parameter: $ => ')',
 
     builtin_function: $ => seq(
-      field('function_name', 
+      field('function_name',
         $.function_name
       ),
       field('opening_parameter', $.opening_parameter),
-      field('function_body', 
+      field('function_body',
         repeat(
           choice(
             $.identifier,
@@ -86,7 +86,7 @@ module.exports = grammar({
     _array_closing: $ => ']',
 
     object_field: $ => prec(
-      1, 
+      1,
       seq(
         /[a-zA-Z\._]+\[/,
         choice(
@@ -185,7 +185,7 @@ module.exports = grammar({
 
     import_package: $ => seq(
       'import',
-      field('imported_package_name', 
+      field('imported_package_name',
         choice(
           $.identifier,
         ),
