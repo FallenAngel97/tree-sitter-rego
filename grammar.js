@@ -30,7 +30,7 @@ module.exports = grammar({
     false: $ => 'false',
 
     comma: $ => ',',
-    
+
     comment: $ => /\#.*?\n\r?/,
 
     function_name: $ => choice(
@@ -167,7 +167,7 @@ module.exports = grammar({
         ),
       ),
       '{',
-        repeat($.rego_rule),
+      repeat($.rego_rule),
       '}',
     ),
 
@@ -177,7 +177,7 @@ module.exports = grammar({
       'as',
       'with',
     ),
-    
+
     as_keyword: $ => seq(
       $.reserved_keywords,
       field('package_alias', $.identifier),
