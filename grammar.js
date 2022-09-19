@@ -38,42 +38,39 @@ module.exports = grammar({
     policy: $ => repeat1($.rule),
 
     // rule            = [ "default" ] rule-head { rule-body }
-    rule: $ => prec.right(1, seq(
+    rule: $ => prec.left(0, seq(
       optional($.default),
       $.rule_head,
-      repeat($.rule_body),
+      $.rule_body,
     )),
 
     // rule-head       = var ( rule-head-set | rule-head-obj | rule-head-func | rule-head-comp | "if" )
-    rule_head: $ => prec.left(2, seq(
+    rule_head: $ => prec.left(3, seq(
       $.var,
       choice(
         // rule-head-set   = ( "contains" term [ "if" ] ) | ( "[" term "]" )
-        choice(
-          seq($.contains, $.term, optional($.if)),
-          seq("[", $.term, "]")
-        ),
+        seq($.contains, $.term, optional($.if)),
+
         // rule-head-obj   = "[" term "]" [ rule-head-comp ] [ "if" ]
         seq(
-          seq("[", $.term, "]"),
+          $.open_bracket, $.term, $.close_bracket,
           optional($.rule_head_comp),
           optional($.if),
         ),
 
         // rule-head-func  = "(" rule-args ")" [ rule-head-comp ]
         seq(
-          seq("(", $.rule_args, ")"),
+          seq($.open_paren, $.rule_args, $.close_paren),
           optional($.rule_head_comp),
           optional($.if),
         ),
 
         // if
-        $.if
-      ),
-    )),
+        $.if,
+    ))),
 
     // rule-head-comp  = ( ":=" | "=" ) term
-    rule_head_comp: $ => seq($.assignment_operator, $.expr),
+    rule_head_comp: $ => seq($.assignment_operator, $.term),
 
     // rule-args       = term { "," term }
     rule_args: $ => seq(
@@ -82,7 +79,7 @@ module.exports = grammar({
     ),
 
     // rule-body       = [ "else" [ ( ":=" | "=" ) term ] ] ( "{" query "}" ) | literal
-    rule_body: $ => seq(
+    rule_body: $ => prec.left(1, seq(
       optional(
         seq(
           $.else,
@@ -95,10 +92,11 @@ module.exports = grammar({
         ),
       ),
       choice(
-        seq("{", $.query, "}"),
-        $.literal
+        seq($.open_curly, $.query, $.close_curly),
+        $.literal,
+        seq($.assignment, $.term),
       )
-    ),
+    )),
 
     // query           = literal { ( ";" | ( [CR] LF ) ) literal }
     query: $ => seq(
@@ -132,21 +130,19 @@ module.exports = grammar({
 
     // expr-parens     = "(" expr ")"
     expr_parens: $ => prec(-1, seq(
-      "(", $.expr, ")"
+      $.open_paren, $.expr, $.close_paren,
     )),
 
     // expr-call       = var [ "." var ] "(" [ expr { "," expr } ] ")"
     expr_call: $ => seq(
-      $.var,
-      optional(
-        seq(".", $.var)
-      ),
-      "(",
-      optional(
-        seq($.expr, repeat(seq(",", $.expr)))
-      ),
-      ")",
+      field("func_name", $.fn_name),
+      $.open_paren,
+      field("func_arguments", optional($.fn_args)),
+      $.close_paren,
     ),
+
+    fn_name: $ => seq($.var, optional(seq(".", $.var))),
+    fn_args: $ => seq($.expr, repeat(seq(",", $.expr))),
 
     // expr-infix = expr infix-operator expr        
     expr_infix: $ => prec.left(1,
@@ -160,12 +156,12 @@ module.exports = grammar({
       repeat(seq(",", $.var)),
       $.in,
       choice($.term, $.expr_call, $.expr_infix),
-      "{", $.query, "}",
+      $.open_curly, $.query, $.close_curly,
     ),
 
     // expr-unary      = "-" expr
     expr_unary: $ => prec.left(-3,
-      seq("-", $.expr)
+      seq("-", $.expr),
     ),
 
     // term            = ref | var | scalar | array | object | set | array-compr | object-compr | set-compr | membership
@@ -184,17 +180,17 @@ module.exports = grammar({
 
     // array-compr     = "[" term "|" rule-body "]"
     array_compr: $ => seq(
-      "[", $.term, "|", $.query, "]",
+      $.open_bracket, $.term, "|", $.query, $.close_bracket,
     ),
 
     // set-compr       = "{" term "|" rule-body "}"
     set_compr: $ => seq(
-      "{", $.term, "|", $.query, "}",
+      $.open_curly, $.term, "|", $.query, $.close_curly,
     ),
 
     // object-compr    = "{" object-item "|" rule-body "}"
     object_compr: $ => seq(
-      "{", $.object_item, "|", $.query, "}",
+      $.open_curly, $.object_item, "|", $.query, $.close_curly,
     ),
 
     // infix-operator  = bool-operator | arith-operator | bin-operator
@@ -249,7 +245,7 @@ module.exports = grammar({
 
     // ref-arg-brack   = "[" ( scalar | var | array | object | set | "_" ) "]"
     ref_arg_brack: $ => seq(
-      "[",
+      $.open_bracket,
       choice(
         $.scalar,
         $.var,
@@ -258,7 +254,7 @@ module.exports = grammar({
         $.set,
         "_",
       ),
-      "]",
+      $.close_bracket,
     ),
 
     // ref-arg-dot     = "." var
@@ -298,22 +294,22 @@ module.exports = grammar({
 
     // array           = "[" term { "," term } "]"
     array: $ => seq(
-      "[",
+      $.open_bracket,
       $.term,
       repeat(
         seq(",", $.term)
       ),
-      "]",
+      $.close_bracket,
     ),
 
     // object          = "{" object-item { "," object-item } "}"
     object: $ => seq(
-      "{",
+      $.open_curly,
       $.object_item,
       repeat(
         seq(",", $.object_item),
       ),
-      "}",
+      $.close_curly,
     ),
 
     // object-item     = ( scalar | ref | var ) ":" term
@@ -328,12 +324,12 @@ module.exports = grammar({
 
     // non-empty-set   = "{" term { "," term } "}"
     non_empty_set: $ => seq(
-      "{",
+      $.open_curly,
       $.term,
       repeat(
         seq(",", $.term),
       ),
-      "}"
+      $.close_curly,
     ),
 
     // empty-set       = "set(" ")"
@@ -352,6 +348,18 @@ module.exports = grammar({
       $.in,
       $.term,
     )),
+
+    // parenthesis
+    open_paren: $ => "(",
+    close_paren: $ => ")",
+
+    // brackets
+    open_bracket: $ => "[",
+    close_bracket: $ => "]",
+
+    // curly bracket
+    open_curly: $ => "{",
+    close_curly: $ => "}",
 
     // number
     number: $ => /([0-9]*[.])?[0-9]+/,
