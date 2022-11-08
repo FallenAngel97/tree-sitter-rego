@@ -10,6 +10,7 @@ module.exports = grammar({
 
   conflicts: $ => [
     [$.membership],
+    [$.rule_body, $.assignment_operator]
   ],
 
   rules: {
@@ -38,16 +39,16 @@ module.exports = grammar({
     policy: $ => repeat1($.rule),
 
     // rule            = [ "default" ] rule-head { rule-body }
-    rule: $ => prec.left(0, seq(
+    rule: $ => seq(
       optional($.default),
       $.rule_head,
       $.rule_body,
-    )),
+    ),
 
     // rule-head       = var ( rule-head-set | rule-head-obj | rule-head-func | rule-head-comp | "if" )
-    rule_head: $ => prec.left(3, seq(
+    rule_head: $ => prec.right(seq(
       $.var,
-      choice(
+      optional(choice(
         // rule-head-set   = ( "contains" term [ "if" ] ) | ( "[" term "]" )
         seq($.contains, $.term, optional($.if)),
 
@@ -67,7 +68,7 @@ module.exports = grammar({
 
         // if
         $.if,
-    ))),
+      )))),
 
     // rule-head-comp  = ( ":=" | "=" ) term
     rule_head_comp: $ => seq($.assignment_operator, $.term),
@@ -79,7 +80,7 @@ module.exports = grammar({
     ),
 
     // rule-body       = [ "else" [ ( ":=" | "=" ) term ] ] ( "{" query "}" ) | literal
-    rule_body: $ => prec.left(1, seq(
+    rule_body: $ => seq(
       optional(
         seq(
           $.else,
@@ -96,7 +97,7 @@ module.exports = grammar({
         $.literal,
         seq($.assignment, $.term),
       )
-    )),
+    ),
 
     // query           = literal { ( ";" | ( [CR] LF ) ) literal }
     query: $ => seq(
