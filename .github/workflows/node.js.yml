@@ -28,4 +28,11 @@ jobs:
         cache: 'npm'
     - run: yarn
     - run: yarn test
-    - run: npx tree-sitter build-wasm && (npx tree-sitter playground --quiet &) && sleep 5 && wget -p -k localhost:8000 && mv localhost:8000 static_playground
+    - run: |
+        npx tree-sitter build-wasm\
+        && (npx tree-sitter playground --quiet &)\
+        && sleep 5 \
+        && wget -p -k localhost:8000 \
+        && mv localhost:8000 static_playground \
+        && wget localhost:8000/tree-sitter.wasm -O static_playground/tree-sitter.wasm \
+        && wget localhost:8000/tree-sitter-parser.wasm -O static_playground/tree-sitter-parser.wasm
