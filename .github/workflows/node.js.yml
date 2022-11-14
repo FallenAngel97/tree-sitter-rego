@@ -36,3 +36,7 @@ jobs:
         && mv localhost:8000 static_playground \
         && wget localhost:8000/tree-sitter.wasm -O static_playground/tree-sitter.wasm \
         && wget localhost:8000/tree-sitter-parser.wasm -O static_playground/tree-sitter-parser.wasm
+    - name: Deploy to GitHub Pages
+      uses: JamesIves/github-pages-deploy-action@v4.4.1
+      with:
+        folder: static_playground
