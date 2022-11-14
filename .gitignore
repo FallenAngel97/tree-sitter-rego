@@ -1,3 +1,5 @@
 node_modules
 tree-sitter-rego.wasm
 build
+.DS_Store
+static_playground
