@@ -1,3 +1,3 @@
 ; locals.scm
-(rego_block) @local.scope
+(policy) @local.scope
 

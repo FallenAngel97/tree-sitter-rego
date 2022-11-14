@@ -1,6 +1,6 @@
-==================
+================================================================================
 Rego block being parsed
-==================
+================================================================================
 
 package test.block
 
@@ -8,12 +8,26 @@ allow_example_rule {
   true
 }
 
----
+--------------------------------------------------------------------------------
 
 (source_file
- (package_definition
-  (identifier))
- (rego_block
-  (identifier)
-  (rego_rule
-   (true))))
+  (module
+    (package)
+    (ref
+      (var)
+      (ref_arg
+        (ref_arg_dot
+          (var))))
+    (policy
+      (rule
+        (rule_head
+          (var))
+        (rule_body
+          (open_curly)
+          (query
+            (literal
+              (expr
+                (term
+                  (scalar
+                    (boolean))))))
+          (close_curly))))))
