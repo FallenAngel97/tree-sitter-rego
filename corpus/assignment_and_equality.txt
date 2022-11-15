@@ -1,0 +1,101 @@
+================================================================================
+assignment
+================================================================================
+
+package test.block
+
+x := 100
+
+--------------------------------------------------------------------------------
+(source_file
+  (module
+    (package)
+    (ref
+      (var)
+      (ref_arg
+        (ref_arg_dot
+          (var))))
+    (policy
+      (rule
+        (rule_head
+          (var))
+        (rule_body
+          (assignment)
+          (term
+            (scalar
+              (number))))))))
+
+================================================================================
+comparison
+================================================================================
+
+package test.block
+
+x == y
+
+--------------------------------------------------------------------------------
+(source_file
+  (module
+    (package)
+    (ref
+      (var)
+      (ref_arg
+        (ref_arg_dot
+          (var))))
+    (policy
+      (rule
+        (rule_head
+          (var))
+        (rule_body
+          (literal
+            (expr
+              (expr_infix
+                (expr
+                  (term
+                    (ref
+                      (MISSING var))))
+                (infix_operator
+                  (bool_operator))
+                (expr
+                  (term
+                    (ref
+                      (var))))))))))))
+(broken)
+
+
+================================================================================
+unification
+================================================================================
+
+package test.block
+
+[x, "world"] = ["hello", y]
+
+--------------------------------------------------------------------------------
+(source_file
+  (module
+    (package)
+    (ref
+      (var)
+      (ref_arg
+        (ref_arg_dot
+          (var)))
+      (ref_arg
+        (ref_arg_brack
+          (open_bracket)
+          (ERROR
+            (var))
+          (scalar
+            (string))
+          (close_bracket)))
+      (ERROR
+        (unification))
+      (ref_arg
+        (ref_arg_brack
+          (open_bracket)
+          (scalar
+            (string))
+          (ERROR
+            (keyword))
+          (close_bracket))))))
+(broken)
