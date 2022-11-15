@@ -38,7 +38,7 @@ jobs:
         && mv localhost:8000 static_playground \
         && wget localhost:8000/tree-sitter.wasm -O static_playground/tree-sitter.wasm \
         && wget localhost:8000/tree-sitter-parser.wasm -O static_playground/tree-sitter-parser.wasm \
-        && sed -i'' -e 's/LANGUAGE_BASE_URL = ""/LANGUAGE_BASE_URL = "tree-sitter-rego"/' static_playground/index.html
+        && sed -i'' -e 's/LANGUAGE_BASE_URL = ""/LANGUAGE_BASE_URL = "https:\/\/fallenangel97.github.io\/tree-sitter-rego"/' static_playground/index.html
     - name: Deploy to GitHub Pages
       uses: JamesIves/github-pages-deploy-action@v4.4.1
       with:
