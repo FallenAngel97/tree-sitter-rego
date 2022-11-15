@@ -1,7 +1,7 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: Node.js CI
+name: Rego TreeSitter parser CI
 
 on:
   push:
@@ -20,7 +20,6 @@ jobs:
     strategy:
       matrix:
         node-version: [16.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
     - uses: actions/checkout@v3
@@ -38,7 +37,8 @@ jobs:
         && wget -p -k localhost:8000 \
         && mv localhost:8000 static_playground \
         && wget localhost:8000/tree-sitter.wasm -O static_playground/tree-sitter.wasm \
-        && wget localhost:8000/tree-sitter-parser.wasm -O static_playground/tree-sitter-parser.wasm
+        && wget localhost:8000/tree-sitter-parser.wasm -O static_playground/tree-sitter-parser.wasm \
+        && sed -i'' -e 's/LANGUAGE_BASE_URL = ""/LANGUAGE_BASE_URL = "tree-sitter-rego"/' static_playground/index.html
     - name: Deploy to GitHub Pages
       uses: JamesIves/github-pages-deploy-action@v4.4.1
       with:
