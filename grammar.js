@@ -42,7 +42,7 @@ module.exports = grammar({
     rule: $ => seq(
       optional($.default),
       $.rule_head,
-      $.rule_body,
+      prec.left(repeat1($.rule_body)),
     ),
 
     // rule-head       = var ( rule-head-set | rule-head-obj | rule-head-func | rule-head-comp | "if" )
