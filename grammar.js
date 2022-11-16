@@ -300,6 +300,7 @@ module.exports = grammar({
       repeat(
         seq(",", $.term)
       ),
+      optional(","),
       $.close_bracket,
     ),
 
@@ -310,6 +311,7 @@ module.exports = grammar({
       repeat(
         seq(",", $.object_item),
       ),
+      optional(","),
       $.close_curly,
     ),
 
@@ -330,6 +332,7 @@ module.exports = grammar({
       repeat(
         seq(",", $.term),
       ),
+      optional(","),
       $.close_curly,
     ),
 
