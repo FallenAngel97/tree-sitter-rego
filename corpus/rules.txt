@@ -518,7 +518,8 @@ reference heads
 package test.block
 
 
-fruit.apple.seeds = 12 if input == "apple"
+fruit.apple.seeds = 12 if input.word == "apple"
+
 
 --------------------------------------------------------------------------------
 (source_file
@@ -553,7 +554,10 @@ fruit.apple.seeds = 12 if input == "apple"
                 (expr
                   (term
                     (ref
-                      (var))))
+                       (var)
+                          (ref_arg
+                            (ref_arg_dot
+                              (var))))))
                 (infix_operator
                   (bool_operator))
                 (expr

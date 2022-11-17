@@ -31,7 +31,9 @@ comparison
 
 package test.block
 
-x == y
+rule {
+    x == y
+}
 
 --------------------------------------------------------------------------------
 (source_file
@@ -47,20 +49,22 @@ x == y
         (rule_head
           (var))
         (rule_body
-          (literal
-            (expr
-              (expr_infix
-                (expr
-                  (term
-                    (ref
-                      (MISSING var))))
-                (infix_operator
-                  (bool_operator))
-                (expr
-                  (term
-                    (ref
-                      (var))))))))))))
-(broken)
+          (open_curly)
+          (query
+            (literal
+              (expr
+                (expr_infix
+                  (expr
+                    (term
+                      (ref
+                        (var))))
+                  (infix_operator
+                    (bool_operator))
+                  (expr
+                    (term
+                      (ref
+                        (var))))))))
+          (close_curly))))))
 
 
 ================================================================================
@@ -69,7 +73,9 @@ unification
 
 package test.block
 
-[x, "world"] = ["hello", y]
+rule {
+    [x, "world"] = ["hello", y]
+}
 
 --------------------------------------------------------------------------------
 (source_file
@@ -79,23 +85,42 @@ package test.block
       (var)
       (ref_arg
         (ref_arg_dot
-          (var)))
-      (ref_arg
-        (ref_arg_brack
-          (open_bracket)
-          (ERROR
-            (var))
-          (scalar
-            (string))
-          (close_bracket)))
-      (ERROR
-        (unification))
-      (ref_arg
-        (ref_arg_brack
-          (open_bracket)
-          (scalar
-            (string))
-          (ERROR
-            (keyword))
-          (close_bracket))))))
-(broken)
+          (var))))
+    (policy
+      (rule
+        (rule_head
+          (var))
+        (rule_body
+          (open_curly)
+          (query
+            (literal
+              (expr
+                (expr_infix
+                  (expr
+                    (term
+                      (ref
+                        (array
+                          (open_bracket)
+                          (term
+                            (ref
+                              (var)))
+                          (term
+                            (scalar
+                              (string)))
+                          (close_bracket)))))
+                  (infix_operator
+                    (assignment_operator
+                      (unification)))
+                  (expr
+                    (term
+                      (ref
+                        (array
+                          (open_bracket)
+                          (term
+                            (scalar
+                              (string)))
+                          (term
+                            (ref
+                              (var)))
+                          (close_bracket)))))))))
+          (close_curly))))))
