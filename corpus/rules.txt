@@ -65,11 +65,21 @@ c := a | b
           (assignment)
           (term
             (ref
-              (var)))))))
-  (ERROR
-    (keyword)))
-(broken)
-
+              (var))))
+        (rule_body
+          (literal
+            (expr
+              (expr_infix
+                (expr
+                  (term
+                    (scalar
+                      (MISSING "null"))))
+                (infix_operator
+                  (bin_operator))
+                (expr
+                  (term
+                    (ref
+                      (var))))))))))))
 
 ================================================================================
 boolean conditionals
@@ -98,19 +108,18 @@ p { true }
           (var))
         (rule_body
           (assignment)
-          (ERROR
-            (term
-              (scalar
-                (boolean))))
           (term
-            (ref
-              (set
-                (non_empty_set
-                  (open_curly)
-                  (term
-                    (scalar
-                      (boolean)))
-                  (close_curly)))))))
+            (scalar
+              (boolean))))
+        (rule_body
+          (open_curly)
+          (query
+            (literal
+              (expr
+                (term
+                  (scalar
+                    (boolean))))))
+          (close_curly)))
       (rule
         (rule_head
           (var)
@@ -136,7 +145,6 @@ p { true }
                   (scalar
                     (boolean))))))
           (close_curly))))))
-(broken)
 
 
 ================================================================================
@@ -344,18 +352,19 @@ else := 10 if { true }
                 (term
                   (scalar
                     (boolean))))))
-          (close_curly)))
-      (rule
-        (rule_head
-          (var))
+          (close_curly))
         (rule_body
-          (assignment)
+          (else)
+          (assignment_operator
+            (assignment))
           (term
             (scalar
-              (number)))))
-      (rule
-        (rule_head
-          (var))
+              (number)))
+          (literal
+            (expr
+              (term
+                (ref
+                  (var))))))
         (rule_body
           (open_curly)
           (query
@@ -564,4 +573,3 @@ fruit.apple.seeds = 12 if input.word == "apple"
                   (term
                     (scalar
                       (string))))))))))))
-(broken)

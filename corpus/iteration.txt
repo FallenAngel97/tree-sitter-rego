@@ -22,52 +22,57 @@ result := count({x | set[x]; f(x)}) == 0
           (var))
         (rule_body
           (assignment)
-          (ERROR
-            (expr_call
-              (fn_name
-                (var))
-              (open_paren)
-              (fn_args
+          (term
+            (ref
+              (var))))
+        (rule_body
+          (literal
+            (expr
+              (expr_infix
+                (expr
+                  (expr_parens
+                    (open_paren)
+                    (expr
+                      (term
+                        (ref
+                          (set_compr
+                            (open_curly)
+                            (term
+                              (ref
+                                (var)))
+                            (query
+                              (literal
+                                (expr
+                                  (term
+                                    (ref
+                                      (var)
+                                      (ref_arg
+                                        (ref_arg_brack
+                                          (open_bracket)
+                                          (var)
+                                          (close_bracket)))))))
+                              (literal
+                                (expr
+                                  (term
+                                    (ref
+                                      (expr_call
+                                        (fn_name
+                                          (var))
+                                        (open_paren)
+                                        (fn_args
+                                          (expr
+                                            (term
+                                              (ref
+                                                (var)))))
+                                        (close_paren)))))))
+                            (close_curly)))))
+                    (close_paren)))
+                (infix_operator
+                  (bool_operator))
                 (expr
                   (term
-                    (ref
-                      (set_compr
-                        (open_curly)
-                        (term
-                          (ref
-                            (var)))
-                        (query
-                          (literal
-                            (expr
-                              (term
-                                (ref
-                                  (var)
-                                  (ref_arg
-                                    (ref_arg_brack
-                                      (open_bracket)
-                                      (var)
-                                      (close_bracket)))))))
-                          (literal
-                            (expr
-                              (term
-                                (ref
-                                  (expr_call
-                                    (fn_name
-                                      (var))
-                                    (open_paren)
-                                    (fn_args
-                                      (expr
-                                        (term
-                                          (ref
-                                            (var)))))
-                                    (close_paren)))))))
-                        (close_curly))))))
-              (close_paren)))
-          (term
-            (scalar
-              (number))))))))
-(broken)
-
+                    (scalar
+                      (number))))))))))))
 
 
 ================================================================================
