@@ -145,7 +145,7 @@ module.exports = grammar({
     fn_name: $ => seq($.var, optional(seq(".", $.var))),
     fn_args: $ => seq($.expr, repeat(seq(",", $.expr))),
 
-    // expr-infix = expr infix-operator expr        
+    // expr-infix = expr infix-operator expr
     expr_infix: $ => prec.left(1,
       seq($.expr, $.infix_operator, $.expr,),
     ),
@@ -199,7 +199,7 @@ module.exports = grammar({
       prec.left(2, $.assignment_operator), $.bool_operator, $.arith_operator, $.bin_operator
     ),
 
-    // assignment-operator = ":=" | "="    
+    // assignment-operator = ":=" | "="
     assignment_operator: $ => choice($.assignment, $.unification),
 
     // assignment operator
@@ -368,7 +368,7 @@ module.exports = grammar({
     // number
     number: $ => /([0-9]*[.])?[0-9]+/,
 
-    // not keyword 
+    // not keyword
     not: $ => "not",
 
     // with keyword
@@ -383,13 +383,13 @@ module.exports = grammar({
     // if keyword
     if: $ => "if",
 
-    // every keyword        
+    // every keyword
     every: $ => "every",
 
     // else keyword
     else: $ => "else",
 
-    // package keyword    
+    // package keyword
     package: $ => "package",
 
     // import keyword
