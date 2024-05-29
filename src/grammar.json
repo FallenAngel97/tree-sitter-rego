@@ -437,7 +437,7 @@
                 "members": [
                   {
                     "type": "SYMBOL",
-                    "name": "literal"
+                    "name": "with_modifier"
                   },
                   {
                     "type": "BLANK"

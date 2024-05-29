@@ -548,6 +548,10 @@
         {
           "type": "literal",
           "named": true
+        },
+        {
+          "type": "with_modifier",
+          "named": true
         }
       ]
     }

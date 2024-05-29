@@ -105,7 +105,7 @@ module.exports = grammar({
       repeat(
         seq(
           choice(";", seq(optional("\r"), "\n")),
-          optional($.literal),
+          optional($.with_modifier),
         ),
       ),
     ),
