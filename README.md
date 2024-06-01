@@ -14,10 +14,19 @@ This repository uses Github Actions, which help verify that the changes submitte
 
 List of TODO items:
 - Introduce more unit tests covering the internal functions
-- Add the loading of WASM file for the Github Actions pipeline
 - Add locals.scm
 
-## Local testing
+## Local testing in browser
+
+```
+npx tree-sitter build-wasm
+npx tree-sitter playground
+```
+
+This will open locally http://127.0.0.1:8000/, where you can check your rules
+directly in the browser
+
+## Local testing in NeoVim
 To be able to locally verify the changes - you should modify your `init.lua` file
 to point to your locally installed tree-sitter grammar
 
@@ -36,6 +45,8 @@ parser_config.rego = {
   filetype = "rego", -- if filetype does not match the parser name
 }
 ```
+
+The live playground is available at: https://fallenangel97.github.io/tree-sitter-rego/
 
 ---
 Powered by
