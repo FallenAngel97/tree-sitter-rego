@@ -2,6 +2,7 @@
 
 This repository tries to cover the tree-sitter implementation for the [OPA Rego language](https://www.openpolicyagent.org/docs/latest/policy-language/)
 
+You can use [NVM](https://github.com/nvm-sh/nvm) in order to load the Node version used to develop the grammar by issuing `nvm use`
 Available scripts
 
 ```bash
