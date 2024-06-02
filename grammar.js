@@ -103,10 +103,16 @@ module.exports = grammar({
     query: $ => seq(
       $.literal,
       repeat(
-        seq(
-          choice(";", seq(optional("\r"), "\n")),
-          optional($.literal),
-        ),
+        choice(
+          seq(
+            choice(";", seq(optional("\r"), "\n")),
+            optional($.literal),
+          ),
+          seq(
+            choice(";", seq(optional("\r"), "\n")),
+            optional($.with_modifier),
+          ),
+        )
       ),
     ),
 

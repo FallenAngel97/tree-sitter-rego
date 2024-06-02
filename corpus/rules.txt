@@ -573,3 +573,81 @@ fruit.apple.seeds = 12 if input.word == "apple"
                   (term
                     (scalar
                       (string))))))))))))
+
+================================================================================
+with keyword
+================================================================================
+
+package test.block
+
+not allow with input as {"user": "charlie", "method": "GET"}
+  with data.roles as {"dev": ["bob"]}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var)
+      (ref_arg
+        (ref_arg_dot
+          (var))))
+    (policy
+      (rule
+        (rule_head
+          (var))
+        (rule_body
+          (literal
+            (expr
+              (term
+                (ref
+                  (var))))
+            (with_modifier
+              (with)
+              (term
+                (ref
+                  (var)))
+              (as)
+              (term
+                (ref
+                  (object
+                    (open_curly)
+                    (object_item
+                      (scalar
+                        (string))
+                      (term
+                        (scalar
+                          (string))))
+                    (object_item
+                      (scalar
+                        (string))
+                      (term
+                        (scalar
+                          (string))))
+                    (close_curly)))))
+            (with_modifier
+              (with)
+              (term
+                (ref
+                  (var)
+                  (ref_arg
+                    (ref_arg_dot
+                      (var)))))
+              (as)
+              (term
+                (ref
+                  (object
+                    (open_curly)
+                    (object_item
+                      (scalar
+                        (string))
+                      (term
+                        (ref
+                          (array
+                            (open_bracket)
+                            (term
+                              (scalar
+                                (string)))
+                            (close_bracket)))))
+                    (close_curly)))))))))))
