@@ -343,18 +343,20 @@ module.exports = grammar({
         'null',
       ),
 
-    // string          = STRING | raw-string
-    string: $ =>
-      choice(
-        seq(
-          '"',
-          repeat(
-            token.immediate(/[^\\"\n]+/),
-          ),
-          '"',
-        ),
-        $.raw_string,
-      ),
+    // string          = STRING | raw-string | interpolated-string-double | interpolated-string-raw
+    string: $ => choice(
+      $.interpolated_string_double,
+      $.interpolated_string_raw,
+      $.quoted_string,
+      $.raw_string,
+    ),
+
+    // quoted-string   = '"' { CHAR } '"'
+    quoted_string: $ => seq(
+      '"',
+      optional(alias(token.immediate(/([^\\"\n]|\\["\\/bfnrt]|\\u[0-9a-fA-F]{4})+/), 'string_content')),
+      '"',
+    ),
 
     // raw-string      = "`" { CHAR-"`" } "`"
     raw_string: $ =>
@@ -365,6 +367,48 @@ module.exports = grammar({
         ),
         '`',
       ),
+
+    // interpolated-string-double = '$"' { string-content | interpolation } '"'
+    interpolated_string_double: $ => seq(
+      '$"',
+      repeat(choice(
+        $.interpolation,
+        $.interpolation_escape,
+        $.string_escape,
+        token.immediate(prec(1, /[^\\"\n{]+/)),
+      )),
+      '"',
+    ),
+
+    // interpolated-string-raw = '$`' { string-content | interpolation } '`'
+    interpolated_string_raw: $ => seq(
+      '$`',
+      repeat(choice(
+        $.interpolation,
+        $.interpolation_escape,
+        token.immediate(prec(1, /[^`{]+/)),
+      )),
+      '`',
+    ),
+
+    // interpolation = '{' expr '}'
+    interpolation: $ => seq(
+      '{',
+      $.expr,
+      '}',
+    ),
+
+    // string-escape = backslash escape sequences
+    string_escape: $ => token.immediate(seq(
+      '\\',
+      choice(
+        /["\\/bfnrt]/,
+        seq('u', /[0-9a-fA-F]{4}/),
+      ),
+    )),
+
+    // interpolation-escape = '\{' | '\}'
+    interpolation_escape: $ => token.immediate(/\\[{}]/),
 
     // array           = "[" term { "," term } "]"
     array: $ =>

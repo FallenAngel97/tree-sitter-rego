@@ -1239,31 +1239,53 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "STRING",
-              "value": "\""
-            },
-            {
-              "type": "REPEAT",
-              "content": {
-                "type": "IMMEDIATE_TOKEN",
-                "content": {
-                  "type": "PATTERN",
-                  "value": "[^\\\\\"\\n]+"
-                }
-              }
-            },
-            {
-              "type": "STRING",
-              "value": "\""
-            }
-          ]
+          "type": "SYMBOL",
+          "name": "interpolated_string_double"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "interpolated_string_raw"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "quoted_string"
         },
         {
           "type": "SYMBOL",
           "name": "raw_string"
+        }
+      ]
+    },
+    "quoted_string": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "\""
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "IMMEDIATE_TOKEN",
+                "content": {
+                  "type": "PATTERN",
+                  "value": "([^\\\\\"\\n]|\\\\[\"\\\\/bfnrt]|\\\\u[0-9a-fA-F]{4})+"
+                }
+              },
+              "named": false,
+              "value": "string_content"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": "\""
         }
       ]
     },
@@ -1289,6 +1311,148 @@
           "value": "`"
         }
       ]
+    },
+    "interpolated_string_double": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "$\""
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "interpolation"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "interpolation_escape"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "string_escape"
+              },
+              {
+                "type": "IMMEDIATE_TOKEN",
+                "content": {
+                  "type": "PREC",
+                  "value": 1,
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[^\\\\\"\\n{]+"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "\""
+        }
+      ]
+    },
+    "interpolated_string_raw": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "$`"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "interpolation"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "interpolation_escape"
+              },
+              {
+                "type": "IMMEDIATE_TOKEN",
+                "content": {
+                  "type": "PREC",
+                  "value": 1,
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[^`{]+"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "`"
+        }
+      ]
+    },
+    "interpolation": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "{"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "expr"
+        },
+        {
+          "type": "STRING",
+          "value": "}"
+        }
+      ]
+    },
+    "string_escape": {
+      "type": "IMMEDIATE_TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "\\"
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "PATTERN",
+                "value": "[\"\\\\/bfnrt]"
+              },
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": "u"
+                  },
+                  {
+                    "type": "PATTERN",
+                    "value": "[0-9a-fA-F]{4}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "interpolation_escape": {
+      "type": "IMMEDIATE_TOKEN",
+      "content": {
+        "type": "PATTERN",
+        "value": "\\\\[{}]"
+      }
     },
     "array": {
       "type": "SEQ",

@@ -106,7 +106,7 @@ rule {
                               (var)))
                           (term
                             (scalar
-                              (string)))
+                              (string (quoted_string))))
                           (close_bracket)))))
                   (infix_operator
                     (assignment_operator
@@ -118,7 +118,7 @@ rule {
                           (open_bracket)
                           (term
                             (scalar
-                              (string)))
+                              (string (quoted_string))))
                           (term
                             (ref
                               (var)))
