@@ -1,12 +1,12 @@
 [package]
 name = "tree-sitter-rego"
-description = "rego grammar for the tree-sitter parsing library"
 version = "0.0.1"
-keywords = ["incremental", "parsing", "rego"]
 categories = ["parsing", "text-editors"]
-repository = "https://github.com/FallenAngel97/tree-sitter-rego"
 edition = "2022"
+keywords = ["incremental", "parsing", "rego"]
 license = "MIT"
+repository = "https://github.com/FallenAngel97/tree-sitter-rego"
+description = "rego grammar for the tree-sitter parsing library"
 
 build = "bindings/rust/build.rs"
 include = [
