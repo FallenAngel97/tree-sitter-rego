@@ -30,6 +30,7 @@
   "devDependencies": {
     "eslint": "^9.0.0",
     "eslint-config-treesitter": "^1.0.2",
+    "nan": "^2.22.0",
     "node-gyp": "^12.1.0",
     "tree-sitter-cli": "^0.25.10"
   }

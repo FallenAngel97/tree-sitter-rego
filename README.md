@@ -7,8 +7,8 @@ You can use [NVM](https://github.com/nvm-sh/nvm) in order to load the Node versi
 Available scripts
 
 ```bash
-npm run generate # initializes parsing for the grammar.js file
-npm run build # compiles the tree-sitter grammar
+yarn generate # initializes parsing for the grammar.js file
+yarn build # compiles the tree-sitter grammar
 ```
 
 Please, verify that your editor supports [EditorConfig plugin](https://editorconfig.org/), which is necessary to keep the development consistent.

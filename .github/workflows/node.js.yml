@@ -26,9 +26,9 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
-        cache: "npm"
-    - run: npm install
-    - run: npm test
+        cache: "yarn"
+    - run: yarn
+    - run: yarn test
     - run: |
         npx tree-sitter build-wasm\
         && (npx tree-sitter playground --quiet &)\
