@@ -5,21 +5,20 @@ name: Rego TreeSitter parser CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 permissions:
   contents: write
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [24.x]
 
     steps:
     - uses: actions/checkout@v3
@@ -27,7 +26,7 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
-        cache: 'npm'
+        cache: "yarn"
     - run: yarn
     - run: yarn test
     - run: |

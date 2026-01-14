@@ -1,5 +1,47 @@
-node_modules
-tree-sitter-rego.wasm
-build
+# Node
+node_modules/
+*.wasm
+.npm
+
+# Build artifacts
+build/
+static_playground/
+
+# Rust
+target/
+Cargo.lock
+
+# Swift
+.build/
+.swiftpm/
+
+# Go
+*.test
+*.out
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+venv/
+.pytest_cache/
+
+# C/C++
+*.o
+*.obj
+*.so
+*.dylib
+*.dll
+*.a
+*.lib
+
+# Development environment
+.direnv/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
 .DS_Store
-static_playground

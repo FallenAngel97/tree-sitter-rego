@@ -89,6 +89,11 @@
     "fields": {}
   },
   {
+    "type": "close_curly",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "close_paren",
     "named": true,
     "fields": {}
@@ -335,6 +340,63 @@
     }
   },
   {
+    "type": "interpolated_string_double",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "interpolation",
+          "named": true
+        },
+        {
+          "type": "interpolation_escape",
+          "named": true
+        },
+        {
+          "type": "string_escape",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "interpolated_string_raw",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "interpolation",
+          "named": true
+        },
+        {
+          "type": "interpolation_escape",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "interpolation",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "expr",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "literal",
     "named": true,
     "fields": {},
@@ -523,6 +585,11 @@
     }
   },
   {
+    "type": "open_curly",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "policy",
     "named": true,
     "fields": {},
@@ -555,6 +622,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "quoted_string",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "raw_string",
@@ -931,6 +1003,7 @@
   {
     "type": "source_file",
     "named": true,
+    "root": true,
     "fields": {},
     "children": {
       "multiple": false,
@@ -949,8 +1022,20 @@
     "fields": {},
     "children": {
       "multiple": false,
-      "required": false,
+      "required": true,
       "types": [
+        {
+          "type": "interpolated_string_double",
+          "named": true
+        },
+        {
+          "type": "interpolated_string_raw",
+          "named": true
+        },
+        {
+          "type": "quoted_string",
+          "named": true
+        },
         {
           "type": "raw_string",
           "named": true
@@ -1049,6 +1134,14 @@
     "named": false
   },
   {
+    "type": "$\"",
+    "named": false
+  },
+  {
+    "type": "$`",
+    "named": false
+  },
+  {
     "type": "%",
     "named": false
   },
@@ -1133,12 +1226,9 @@
     "named": true
   },
   {
-    "type": "close_curly",
-    "named": true
-  },
-  {
     "type": "comment",
-    "named": true
+    "named": true,
+    "extra": true
   },
   {
     "type": "contains",
@@ -1173,6 +1263,10 @@
     "named": true
   },
   {
+    "type": "interpolation_escape",
+    "named": true
+  },
+  {
     "type": "not",
     "named": true
   },
@@ -1186,10 +1280,6 @@
   },
   {
     "type": "open_bracket",
-    "named": true
-  },
-  {
-    "type": "open_curly",
     "named": true
   },
   {
@@ -1209,6 +1299,14 @@
     "named": true
   },
   {
+    "type": "string_content",
+    "named": false
+  },
+  {
+    "type": "string_escape",
+    "named": true
+  },
+  {
     "type": "true",
     "named": false
   },
@@ -1225,7 +1323,15 @@
     "named": true
   },
   {
+    "type": "{",
+    "named": false
+  },
+  {
     "type": "|",
+    "named": false
+  },
+  {
+    "type": "}",
     "named": false
   }
 ]

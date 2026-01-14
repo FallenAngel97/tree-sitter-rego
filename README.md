@@ -1,6 +1,7 @@
-# 🌳 Tree sitter implementation for rego language
+# 🌳 Tree sitter implementation for Rego language
 
-This repository tries to cover the tree-sitter implementation for the [OPA Rego language](https://www.openpolicyagent.org/docs/latest/policy-language/)
+This repository tries to cover the tree-sitter implementation for
+[OPA's Rego language](https://www.openpolicyagent.org/docs/policy-language/)
 
 You can use [NVM](https://github.com/nvm-sh/nvm) in order to load the Node version used to develop the grammar by issuing `nvm use`
 Available scripts
@@ -14,6 +15,7 @@ Please, verify that your editor supports [EditorConfig plugin](https://editorcon
 This repository uses Github Actions, which help verify that the changes submitted can be unit-tested, built and deployed to a [Github Pages](https://fallenangel97.github.io/tree-sitter-rego/)
 
 List of TODO items:
+
 - Introduce more unit tests covering the internal functions
 - Add locals.scm
 
@@ -28,6 +30,7 @@ This will open locally http://127.0.0.1:8000/, where you can check your rules
 directly in the browser
 
 ## Local testing in NeoVim
+
 To be able to locally verify the changes - you should modify your `init.lua` file
 to point to your locally installed tree-sitter grammar
 
@@ -50,6 +53,7 @@ parser_config.rego = {
 The live playground is available at: https://fallenangel97.github.io/tree-sitter-rego/
 
 ---
+
 Powered by
 
 <a href='https://decodeapps.pp.ua/'><img height="20" src="https://decodeapps.pp.ua/_next/static/media/logo-light.3763f5cc.svg" /></a>

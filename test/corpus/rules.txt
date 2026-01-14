@@ -485,7 +485,7 @@ f(x) := "A" if { x >= 70; x < 80 }
               (assignment))
             (term
               (scalar
-                (string))))
+                (string (quoted_string)))))
           (if))
         (rule_body
           (open_curly)
@@ -572,7 +572,7 @@ fruit.apple.seeds = 12 if input.word == "apple"
                 (expr
                   (term
                     (scalar
-                      (string))))))))))))
+                      (string (quoted_string)))))))))))))
 
 ================================================================================
 with keyword
@@ -615,16 +615,16 @@ not allow with input as {"user": "charlie", "method": "GET"}
                     (open_curly)
                     (object_item
                       (scalar
-                        (string))
+                        (string (quoted_string)))
                       (term
                         (scalar
-                          (string))))
+                          (string (quoted_string)))))
                     (object_item
                       (scalar
-                        (string))
+                        (string (quoted_string)))
                       (term
                         (scalar
-                          (string))))
+                          (string (quoted_string)))))
                     (close_curly)))))
             (with_modifier
               (with)
@@ -641,13 +641,13 @@ not allow with input as {"user": "charlie", "method": "GET"}
                     (open_curly)
                     (object_item
                       (scalar
-                        (string))
+                        (string (quoted_string)))
                       (term
                         (ref
                           (array
                             (open_bracket)
                             (term
                               (scalar
-                                (string)))
+                                (string (quoted_string))))
                             (close_bracket)))))
                     (close_curly)))))))))))

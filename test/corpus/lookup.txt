@@ -118,7 +118,7 @@ some i, "foo" in arr
                       (var)))
                   (term
                     (scalar
-                      (string)))
+                      (string (quoted_string))))
                   (in)
                   (term
                     (ref
@@ -153,7 +153,7 @@ o := {"foo": false}
                 (open_curly)
                 (object_item
                   (scalar
-                    (string))
+                    (string (quoted_string)))
                   (term
                     (scalar
                       (boolean))))
@@ -194,7 +194,7 @@ val := obj["foo"]
                     (open_bracket)
                     (term
                       (scalar
-                        (string)))
+                        (string (quoted_string))))
                     (close_bracket)))))))))))
 
 
@@ -286,7 +286,7 @@ result {
                           (open_curly)
                           (object_item
                             (scalar
-                              (string))
+                              (string (quoted_string)))
                             (term
                               (scalar
                                 (boolean))))
@@ -308,7 +308,7 @@ result {
                   (membership
                     (term
                       (scalar
-                        (string)))
+                        (string (quoted_string))))
                     (term
                       (scalar
                         (boolean)))
@@ -348,13 +348,13 @@ myset := ["a", "b", "c"]
                 (open_bracket)
                 (term
                   (scalar
-                    (string)))
+                    (string (quoted_string))))
                 (term
                   (scalar
-                    (string)))
+                    (string (quoted_string))))
                 (term
                   (scalar
-                    (string)))
+                    (string (quoted_string))))
                 (close_bracket)))))))))
 
 
@@ -392,7 +392,7 @@ result {
                   (membership
                     (term
                       (scalar
-                        (string)))
+                        (string (quoted_string))))
                     (in)
                     (term
                       (ref
@@ -409,7 +409,7 @@ result {
                           (var)))
                       (term
                         (scalar
-                          (string)))
+                          (string (quoted_string))))
                       (term
                         (ref
                           (var)))
@@ -426,7 +426,7 @@ result {
                   (membership
                     (term
                       (scalar
-                        (string)))
+                        (string (quoted_string))))
                     (in)
                     (term
                       (ref
