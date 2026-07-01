@@ -1271,8 +1271,12 @@
               "content": {
                 "type": "IMMEDIATE_TOKEN",
                 "content": {
-                  "type": "PATTERN",
-                  "value": "([^\\\\\"\\n]|\\\\[\"\\\\/bfnrt]|\\\\u[0-9a-fA-F]{4})+"
+                  "type": "PREC",
+                  "value": 1,
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "([^\\\\\"\\n]|\\\\[\"\\\\/bfnrt]|\\\\u[0-9a-fA-F]{4})+"
+                  }
                 }
               },
               "named": false,
@@ -1301,8 +1305,12 @@
           "content": {
             "type": "IMMEDIATE_TOKEN",
             "content": {
-              "type": "PATTERN",
-              "value": "[^`]+"
+              "type": "PREC",
+              "value": 1,
+              "content": {
+                "type": "PATTERN",
+                "value": "[^`]+"
+              }
             }
           }
         },

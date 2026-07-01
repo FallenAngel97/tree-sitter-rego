@@ -352,9 +352,13 @@ module.exports = grammar({
     ),
 
     // quoted-string   = '"' { CHAR } '"'
+    // String content needs lexical precedence over the comment token:
+    // without it, a '#' in the content lets the comment (which runs to end
+    // of line) win the longest-match rule, so `"#fff"` lexed as a comment
+    // and corrupted the rest of the parse.
     quoted_string: $ => seq(
       '"',
-      optional(alias(token.immediate(/([^\\"\n]|\\["\\/bfnrt]|\\u[0-9a-fA-F]{4})+/), 'string_content')),
+      optional(alias(token.immediate(prec(1, /([^\\"\n]|\\["\\/bfnrt]|\\u[0-9a-fA-F]{4})+/)), 'string_content')),
       '"',
     ),
 
@@ -363,7 +367,7 @@ module.exports = grammar({
       seq(
         '`',
         repeat(
-          token.immediate(/[^`]+/),
+          token.immediate(prec(1, /[^`]+/)),
         ),
         '`',
       ),
