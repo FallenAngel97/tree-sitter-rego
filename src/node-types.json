@@ -816,6 +816,10 @@
           "named": true
         },
         {
+          "type": "if",
+          "named": true
+        },
+        {
           "type": "literal",
           "named": true
         },
@@ -829,6 +833,10 @@
         },
         {
           "type": "term",
+          "named": true
+        },
+        {
+          "type": "unification",
           "named": true
         }
       ]
@@ -895,6 +903,22 @@
       "types": [
         {
           "type": "assignment_operator",
+          "named": true
+        },
+        {
+          "type": "expr_call",
+          "named": true
+        },
+        {
+          "type": "expr_infix",
+          "named": true
+        },
+        {
+          "type": "expr_parens",
+          "named": true
+        },
+        {
+          "type": "expr_unary",
           "named": true
         },
         {
