@@ -1,0 +1,199 @@
+================================================================================
+v0 partial set rule at end of file
+================================================================================
+
+package p
+
+q[x] { x := 1 }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (open_bracket)
+          (term
+            (ref
+              (var)))
+          (close_bracket))
+        (rule_body
+          (open_curly)
+          (query
+            (literal
+              (expr
+                (expr_infix
+                  (expr
+                    (term
+                      (ref
+                        (var))))
+                  (infix_operator
+                    (assignment_operator
+                      (assignment)))
+                  (expr
+                    (term
+                      (scalar
+                        (number))))))))
+          (close_curly))))))
+
+================================================================================
+v0 object rule with string key at end of file
+================================================================================
+
+package p
+
+q["a"] = 1 { true }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (open_bracket)
+          (term
+            (scalar
+              (string
+                (quoted_string))))
+          (close_bracket)
+          (rule_head_comp
+            (assignment_operator
+              (unification))
+            (term
+              (scalar
+                (number)))))
+        (rule_body
+          (open_curly)
+          (query
+            (literal
+              (expr
+                (term
+                  (scalar
+                    (boolean))))))
+          (close_curly))))))
+
+================================================================================
+v0 object rule at end of file
+================================================================================
+
+package p
+
+q[x] = y { true }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (open_bracket)
+          (term
+            (ref
+              (var)))
+          (close_bracket)
+          (rule_head_comp
+            (assignment_operator
+              (unification))
+            (term
+              (ref
+                (var)))))
+        (rule_body
+          (open_curly)
+          (query
+            (literal
+              (expr
+                (term
+                  (scalar
+                    (boolean))))))
+          (close_curly))))))
+
+================================================================================
+v0 function rule at end of file
+================================================================================
+
+package p
+
+f(x) = y { true }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (open_paren)
+          (rule_args
+            (term
+              (ref
+                (var))))
+          (close_paren)
+          (rule_head_comp
+            (assignment_operator
+              (unification))
+            (term
+              (ref
+                (var)))))
+        (rule_body
+          (open_curly)
+          (query
+            (literal
+              (expr
+                (term
+                  (scalar
+                    (boolean))))))
+          (close_curly))))))
+
+================================================================================
+v0 rule named if after a constant stays separate
+================================================================================
+
+package p
+
+a := 1
+
+if := 2
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var))
+        (rule_body
+          (assignment)
+          (term
+            (scalar
+              (number)))))
+      (rule
+        (rule_head
+          (var))
+        (rule_body
+          (assignment)
+          (term
+            (scalar
+              (number))))))))
