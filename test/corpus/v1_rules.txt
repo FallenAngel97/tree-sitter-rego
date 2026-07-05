@@ -388,3 +388,293 @@ a = 1 { true }
                   (scalar
                     (boolean))))))
           (close_curly))))))
+
+================================================================================
+bodiless partial set rule at end of file
+================================================================================
+
+package p
+
+deny contains "msg"
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (contains)
+          (term
+            (scalar
+              (string
+                (quoted_string)))))))))
+
+================================================================================
+bodiless partial set rule followed by a constant
+================================================================================
+
+package p
+
+deny contains "msg"
+
+allow := true
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (contains)
+          (term
+            (scalar
+              (string
+                (quoted_string))))))
+      (rule
+        (rule_head
+          (var))
+        (rule_body
+          (assignment)
+          (term
+            (scalar
+              (boolean))))))))
+
+================================================================================
+bodiless partial set rule followed by a conditional one
+================================================================================
+
+package p
+
+deny contains "a"
+
+deny contains "b" if input.x
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (contains)
+          (term
+            (scalar
+              (string
+                (quoted_string))))))
+      (rule
+        (rule_head
+          (var)
+          (contains)
+          (term
+            (scalar
+              (string
+                (quoted_string))))
+          (if))
+        (rule_body
+          (literal
+            (expr
+              (term
+                (ref
+                  (var)
+                  (ref_arg
+                    (ref_arg_dot
+                      (var))))))))))))
+
+================================================================================
+contains rule with unbraced if body stays fused
+================================================================================
+
+package p
+
+deny contains "msg" if input.x
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (contains)
+          (term
+            (scalar
+              (string
+                (quoted_string))))
+          (if))
+        (rule_body
+          (literal
+            (expr
+              (term
+                (ref
+                  (var)
+                  (ref_arg
+                    (ref_arg_dot
+                      (var))))))))))))
+
+================================================================================
+v0 contains rule with braced body and no if stays fused
+================================================================================
+
+package p
+
+deny contains "msg" { input.x }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (contains)
+          (term
+            (scalar
+              (string
+                (quoted_string)))))
+        (rule_body
+          (open_curly)
+          (query
+            (literal
+              (expr
+                (term
+                  (ref
+                    (var)
+                    (ref_arg
+                      (ref_arg_dot
+                        (var))))))))
+          (close_curly))))))
+
+================================================================================
+bodiless partial set rule followed by a v0 constant named if
+================================================================================
+
+package p
+
+deny contains "msg"
+
+if := 2
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (contains)
+          (term
+            (scalar
+              (string
+                (quoted_string))))))
+      (rule
+        (rule_head
+          (var))
+        (rule_body
+          (assignment)
+          (term
+            (scalar
+              (number))))))))
+
+================================================================================
+two consecutive bodiless partial set rules
+================================================================================
+
+package p
+
+deny contains "a"
+
+deny contains "b"
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (contains)
+          (term
+            (scalar
+              (string
+                (quoted_string))))))
+      (rule
+        (rule_head
+          (var)
+          (contains)
+          (term
+            (scalar
+              (string
+                (quoted_string)))))))))
+
+================================================================================
+bodiless partial set rule followed by a v1 comp rule
+================================================================================
+
+package p
+
+deny contains "msg"
+
+x := 1 if y
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (contains)
+          (term
+            (scalar
+              (string
+                (quoted_string))))))
+      (rule
+        (rule_head
+          (var)
+          (rule_head_comp
+            (assignment_operator
+              (assignment))
+            (term
+              (scalar
+                (number))))
+          (if))
+        (rule_body
+          (literal
+            (expr
+              (term
+                (ref
+                  (var))))))))))

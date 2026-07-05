@@ -12,6 +12,7 @@ module.exports = grammar({
     [$.membership],
     [$.rule_body, $.assignment_operator],
     [$.rule_head, $.rule_head_v1],
+    [$.rule_head_set, $.rule_head_set_if],
     [$.rule_head],
   ],
 
@@ -66,6 +67,43 @@ module.exports = grammar({
             repeat($.rule_body),
           )),
         )),
+        // Partial-set rules (`deny contains "msg" …`) get one alternative
+        // per body arity, so each carries its own dynamic precedence:
+        //
+        //   bodiless (2)  `deny contains "msg"` — no body at all
+        //                 (unconditional membership in OPA v1). Outranks
+        //                 swallowing the next statement as a rule body.
+        //   braced   (1)  `deny contains "msg" { … }` — v0 form. The first
+        //                 body must be a braced query, so a following rule
+        //                 can never be captured as an unbraced body.
+        //   if       (3)  `deny contains "msg" if <body>` — v1 form. Like
+        //                 the comp+if alternative above, the first body is
+        //                 a braced query or single literal: a bare
+        //                 `:= term` value body cannot follow the `if`, so
+        //                 a v0 constant literally named `if` after a
+        //                 bodiless rule splits off as its own rule instead
+        //                 of fusing in as `... if := term`. Outranks the
+        //                 bodiless parse plus a phantom rule named `if`.
+        prec.dynamic(2, seq(
+          optional($.default),
+          alias($.rule_head_set, $.rule_head),
+        )),
+        prec.dynamic(1, seq(
+          optional($.default),
+          alias($.rule_head_set, $.rule_head),
+          prec.left(seq(
+            alias($.rule_body_braced, $.rule_body),
+            repeat($.rule_body),
+          )),
+        )),
+        prec.dynamic(3, seq(
+          optional($.default),
+          alias($.rule_head_set_if, $.rule_head),
+          prec.left(seq(
+            alias($.rule_body_v1, $.rule_body),
+            repeat($.rule_body),
+          )),
+        )),
       ),
 
     // rule-head       = var ( rule-head-set | rule-head-obj | rule-head-func | "if" )
@@ -74,12 +112,20 @@ module.exports = grammar({
     // head and break plain constants), GLR needs an explicit preference
     // for keeping brackets/args/if in the head over demoting them to body
     // literals.
+    // The `contains` (rule-head-set) forms live in their own `rule`
+    // alternatives above, so each body arity can be constrained.
+    //
+    // The head name admits the `if` keyword (aliased to var): v0 policies
+    // may define rules literally named `if`. Without this, the keyword
+    // lexer never offers a "new rule starts here" reading when `if`
+    // follows a complete rule, and GLR cannot even consider splitting —
+    // `deny contains "msg"` + `if := 2` would fuse with an ERROR instead
+    // of parsing as two rules.
     rule_head: $ =>
       seq(
-        $.var,
+        choice($.var, alias($.if, $.var)),
         optional(prec.dynamic(1, choice(
-          // rule-head-set   = ( "contains" term [ "if" ] ) | ( "[" term "]" )
-          seq($.contains, $.term, optional($.if)),
+          // rule-head-set   = "[" term "]"
           // rule-head-obj   = "[" term "]" [ rule-head-comp ] [ "if" ]
           seq(
             $.open_bracket,
@@ -101,6 +147,15 @@ module.exports = grammar({
 
     // OPA v1 rule head with the value bound in the head: `x := 1 if`
     rule_head_v1: $ => seq($.var, $.rule_head_comp, $.if),
+
+    // Head of a partial-set rule: `deny contains "msg"`.
+    rule_head_set: $ => seq($.var, $.contains, $.term),
+
+    // Head of a v1 conditional partial-set rule: `deny contains "msg" if`.
+    rule_head_set_if: $ => seq($.var, $.contains, $.term, $.if),
+
+    // First body of a braced partial-set rule: the braced query only.
+    rule_body_braced: $ => $._braced_query,
 
     // The body of a v1 comp+if rule: braced query or single literal.
     rule_body_v1: $ =>
