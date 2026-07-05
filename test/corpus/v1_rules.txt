@@ -233,6 +233,7 @@ y := 2
           (term
             (scalar
               (number))))))))
+
 ================================================================================
 v1 function with infix expression value
 ================================================================================
@@ -388,3 +389,137 @@ a = 1 { true }
                   (scalar
                     (boolean))))))
           (close_curly))))))
+
+================================================================================
+v1 rule with parenthesized body followed by a constant
+================================================================================
+
+package p
+
+a := 1 if (x)
+
+b := 2
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (rule_head_comp
+            (assignment_operator
+              (assignment))
+            (term
+              (scalar
+                (number))))
+          (if))
+        (rule_body
+          (literal
+            (expr
+              (expr_parens
+                (open_paren)
+                (expr
+                  (term
+                    (ref
+                      (var))))
+                (close_paren))))))
+      (rule
+        (rule_head
+          (var))
+        (rule_body
+          (assignment)
+          (term
+            (scalar
+              (number))))))))
+
+================================================================================
+v1 rule with unbraced assignment body
+================================================================================
+
+package p
+
+a := 1 if x := 2
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (rule_head_comp
+            (assignment_operator
+              (assignment))
+            (term
+              (scalar
+                (number))))
+          (if))
+        (rule_body
+          (literal
+            (expr
+              (expr_infix
+                (expr
+                  (term
+                    (ref
+                      (var))))
+                (infix_operator
+                  (assignment_operator
+                    (assignment)))
+                (expr
+                  (term
+                    (scalar
+                      (number))))))))))))
+
+================================================================================
+v1 rule with unbraced unification body
+================================================================================
+
+package p
+
+a := 1 if input.x = 1
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (rule_head_comp
+            (assignment_operator
+              (assignment))
+            (term
+              (scalar
+                (number))))
+          (if))
+        (rule_body
+          (literal
+            (expr
+              (expr_infix
+                (expr
+                  (term
+                    (ref
+                      (var)
+                      (ref_arg
+                        (ref_arg_dot
+                          (var))))))
+                (infix_operator
+                  (assignment_operator
+                    (unification)))
+                (expr
+                  (term
+                    (scalar
+                      (number))))))))))))

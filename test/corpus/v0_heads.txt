@@ -197,3 +197,250 @@ if := 2
           (term
             (scalar
               (number))))))))
+
+================================================================================
+v0 function named if after a constant stays separate
+================================================================================
+
+package p
+
+a := 1
+
+if(x) := x
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var))
+        (rule_body
+          (assignment)
+          (term
+            (scalar
+              (number)))))
+      (rule
+        (rule_head
+          (var)
+          (open_paren)
+          (rule_args
+            (term
+              (ref
+                (var))))
+          (close_paren))
+        (rule_body
+          (assignment)
+          (term
+            (ref
+              (var))))))))
+
+================================================================================
+v0 unification function named if after a constant stays separate
+================================================================================
+
+package p
+
+a = 1
+
+if(x) = x { true }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var))
+        (rule_body
+          (unification)
+          (term
+            (scalar
+              (number)))))
+      (rule
+        (rule_head
+          (var)
+          (open_paren)
+          (rule_args
+            (term
+              (ref
+                (var))))
+          (close_paren)
+          (rule_head_comp
+            (assignment_operator
+              (unification))
+            (term
+              (ref
+                (var)))))
+        (rule_body
+          (open_curly)
+          (query
+            (literal
+              (expr
+                (term
+                  (scalar
+                    (boolean))))))
+          (close_curly))))))
+
+================================================================================
+v0 object rule named if after a constant stays separate
+================================================================================
+
+package p
+
+a := 1
+
+if[x] := 2
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var))
+        (rule_body
+          (assignment)
+          (term
+            (scalar
+              (number)))))
+      (rule
+        (rule_head
+          (var)
+          (open_bracket)
+          (term
+            (ref
+              (var)))
+          (close_bracket))
+        (rule_body
+          (assignment)
+          (term
+            (scalar
+              (number))))))))
+
+================================================================================
+v0 function named if with expression value stays separate
+================================================================================
+
+package p
+
+a := 1
+
+if(x) := x + 1
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var))
+        (rule_body
+          (assignment)
+          (term
+            (scalar
+              (number)))))
+      (rule
+        (rule_head
+          (var))
+        (rule_body
+          (literal
+            (expr
+              (expr_infix
+                (expr
+                  (expr_infix
+                    (expr
+                      (expr_parens
+                        (open_paren)
+                        (expr
+                          (term
+                            (ref
+                              (var))))
+                        (close_paren)))
+                    (infix_operator
+                      (assignment_operator
+                        (assignment)))
+                    (expr
+                      (term
+                        (ref
+                          (var))))))
+                (infix_operator
+                  (arith_operator))
+                (expr
+                  (term
+                    (scalar
+                      (number))))))))))))
+
+================================================================================
+v0 object rule named if with expression value stays separate
+================================================================================
+
+package p
+
+a := 1
+
+if[x] := 2 + 3
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var))
+        (rule_body
+          (assignment)
+          (term
+            (scalar
+              (number)))))
+      (rule
+        (rule_head
+          (var))
+        (rule_body
+          (literal
+            (expr
+              (expr_infix
+                (expr
+                  (expr_infix
+                    (expr
+                      (term
+                        (ref
+                          (array
+                            (open_bracket)
+                            (term
+                              (ref
+                                (var)))
+                            (close_bracket)))))
+                    (infix_operator
+                      (assignment_operator
+                        (assignment)))
+                    (expr
+                      (term
+                        (scalar
+                          (number))))))
+                (infix_operator
+                  (arith_operator))
+                (expr
+                  (term
+                    (scalar
+                      (number))))))))))))
