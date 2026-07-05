@@ -1,0 +1,75 @@
+================================================================================
+hash inside quoted string
+================================================================================
+
+package test
+
+color := "#fff"
+
+--------------------------------------------------------------------------------
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var))
+        (rule_body
+          (assignment)
+          (term
+            (scalar
+              (string
+                (quoted_string)))))))))
+
+================================================================================
+hash inside raw string
+================================================================================
+
+package test
+
+tag := `#hash`
+
+--------------------------------------------------------------------------------
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var))
+        (rule_body
+          (assignment)
+          (term
+            (scalar
+              (string
+                (raw_string)))))))))
+
+================================================================================
+comment after string containing hash
+================================================================================
+
+package test
+
+x := "#a" # real comment
+
+--------------------------------------------------------------------------------
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var))
+        (rule_body
+          (assignment)
+          (term
+            (scalar
+              (string
+                (quoted_string))))))))
+  (comment))
