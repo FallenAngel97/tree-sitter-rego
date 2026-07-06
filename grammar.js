@@ -11,6 +11,8 @@ module.exports = grammar({
   conflicts: $ => [
     [$.membership],
     [$.rule_body, $.assignment_operator],
+    [$.rule_head, $.rule_head_v1],
+    [$.rule_head],
   ],
 
   rules: {
@@ -44,17 +46,38 @@ module.exports = grammar({
 
     // rule            = [ "default" ] rule-head { rule-body }
     rule: $ =>
-      seq(
-        optional($.default),
-        $.rule_head,
-        prec.left(repeat1($.rule_body)),
+      choice(
+        seq(
+          optional($.default),
+          $.rule_head,
+          prec.left(repeat1($.rule_body)),
+        ),
+        // OPA v1 comp+if rule: `x := 1 if <body>`. The value lives in the
+        // head, and the first body is a braced query or a single literal —
+        // never a v0 `:= term` body — so a following v0 rule whose head
+        // happens to be named `if` cannot be fused in. Dynamic precedence
+        // prefers this one-rule parse over "value rule followed by a rule
+        // named if".
+        prec.dynamic(1, seq(
+          optional($.default),
+          alias($.rule_head_v1, $.rule_head),
+          prec.left(seq(
+            alias($.rule_body_v1, $.rule_body),
+            repeat($.rule_body),
+          )),
+        )),
       ),
 
-    // rule-head       = var ( rule-head-set | rule-head-obj | rule-head-func | rule-head-comp | "if" )
+    // rule-head       = var ( rule-head-set | rule-head-obj | rule-head-func | "if" )
+    // The head forms share one dynamic precedence: without prec.right on
+    // the whole head (which would statically force `var :=` into the v1
+    // head and break plain constants), GLR needs an explicit preference
+    // for keeping brackets/args/if in the head over demoting them to body
+    // literals.
     rule_head: $ =>
-      prec.right(seq(
+      seq(
         $.var,
-        optional(choice(
+        optional(prec.dynamic(1, choice(
           // rule-head-set   = ( "contains" term [ "if" ] ) | ( "[" term "]" )
           seq($.contains, $.term, optional($.if)),
           // rule-head-obj   = "[" term "]" [ rule-head-comp ] [ "if" ]
@@ -73,11 +96,29 @@ module.exports = grammar({
           ),
           // if
           $.if,
-        )),
-      )),
+        ))),
+      ),
+
+    // OPA v1 rule head with the value bound in the head: `x := 1 if`
+    rule_head_v1: $ => seq($.var, $.rule_head_comp, $.if),
+
+    // The body of a v1 comp+if rule: braced query or single literal.
+    rule_body_v1: $ =>
+      choice(
+        $._braced_query,
+        $.literal,
+      ),
 
     // rule-head-comp  = ( ":=" | "=" ) term
-    rule_head_comp: $ => seq($.assignment_operator, $.term),
+    // OPA accepts full expressions as rule values (`f(x) := x + 1 if ...`),
+    // not just plain terms; expr-every is body-only and stays out. The
+    // dynamic precedence keeps the value in the head when a rule_body
+    // value parse would otherwise tie (`q["a"] = 1 { true }`).
+    rule_head_comp: $ =>
+      prec.dynamic(1, seq(
+        $.assignment_operator,
+        choice($.term, $.expr_infix, $.expr_call, $.expr_parens, $.expr_unary),
+      )),
 
     // rule-args       = term { "," term }
     rule_args: $ =>
@@ -86,7 +127,7 @@ module.exports = grammar({
         repeat(seq(',', $.term)),
       ),
 
-    // rule-body       = [ "else" [ ( ":=" | "=" ) term ] ] ( "{" query "}" ) | literal
+    // rule-body       = [ "else" [ ( ":=" | "=" ) term ] [ "if" ] ] ( "{" query "}" ) | literal
     rule_body: $ =>
       seq(
         optional(
@@ -98,14 +139,19 @@ module.exports = grammar({
                 $.term,
               ),
             ),
+            // OPA v1 else clauses: `else := 2 if { ... }` / `else if { ... }`
+            optional($.if),
           ),
         ),
         choice(
-          seq($.open_curly, $.query, $.close_curly),
+          $._braced_query,
           $.literal,
-          seq($.assignment, $.term),
+          // The bound value of a constant rule: `x := 1` or `x = 1`.
+          seq(choice($.assignment, $.unification), $.term),
         ),
       ),
+
+    _braced_query: $ => seq($.open_curly, $.query, $.close_curly),
 
     // query           = literal { ( ";" | ( [CR] LF ) ) literal }
     query: $ =>
