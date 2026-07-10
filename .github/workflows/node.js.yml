@@ -39,6 +39,7 @@ jobs:
         && wget localhost:8000/tree-sitter-parser.wasm -O static_playground/tree-sitter-parser.wasm \
         && sed -i'' -e 's/LANGUAGE_BASE_URL = ""/LANGUAGE_BASE_URL = "https:\/\/fallenangel97.github.io\/tree-sitter-rego"/' static_playground/index.html
     - name: Deploy to GitHub Pages
+      if: github.event_name == 'push'
       uses: JamesIves/github-pages-deploy-action@v4.4.1
       with:
         folder: static_playground
