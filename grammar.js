@@ -11,6 +11,7 @@ module.exports = grammar({
   conflicts: $ => [
     [$.membership],
     [$.rule_body, $.assignment_operator],
+    [$.rule_body_v1_tail, $.assignment_operator],
     [$.rule_head, $.rule_head_v1],
     [$.rule_head],
   ],
@@ -63,7 +64,7 @@ module.exports = grammar({
           alias($.rule_head_v1, $.rule_head),
           prec.left(seq(
             alias($.rule_body_v1, $.rule_body),
-            repeat($.rule_body),
+            repeat(alias($.rule_body_v1_tail, $.rule_body)),
           )),
         )),
       ),
@@ -102,11 +103,139 @@ module.exports = grammar({
     // OPA v1 rule head with the value bound in the head: `x := 1 if`
     rule_head_v1: $ => seq($.var, $.rule_head_comp, $.if),
 
-    // The body of a v1 comp+if rule: braced query or single literal.
+    // The body of a v1 comp+if rule: braced query or single literal —
+    // but a top-level assignment/unification may not have a parenthesized
+    // or array-shaped left-hand side. `a := 1` followed by `if(x) := x`
+    // (a v0 function named `if`) or `if[x] := 2` (a v0 object rule named
+    // `if`) must not fuse into `a := 1 if` with body `(x) := x` /
+    // `[x] := 2`: those are exactly the assignment literals whose lhs
+    // starts with `(` or `[`, so excluding that shape kills the fused GLR
+    // path and the two-rule parse is the only one left standing. Ordinary
+    // assignment bodies keep their one-rule parse (`a := 1 if x := 2`,
+    // `a := 1 if input.x = 1`), as does everything braced.
     rule_body_v1: $ =>
       choice(
         $._braced_query,
+        alias($.literal_v1, $.literal),
+      ),
+
+    // literal, minus assignment/unification infix expressions whose lhs
+    // is a parenthesized expression or an array. Nested assignments
+    // (inside parens, calls, comprehensions) are still reached through
+    // the regular expr rules.
+    literal_v1: $ =>
+      seq(
+        choice($.some_decl, alias($.expr_v1, $.expr), seq($.not, $.expr)),
+        repeat($.with_modifier),
+      ),
+
+    expr_v1: $ =>
+      prec.left(
+        1,
+        choice(
+          $.term,
+          $.expr_call,
+          alias($.expr_infix_v1, $.expr_infix),
+          $.expr_every,
+          $.expr_parens,
+          $.expr_unary,
+        ),
+      ),
+
+    expr_infix_v1: $ =>
+      prec.left(
+        1,
+        choice(
+          // Non-assignment operators. The left operand recurses through
+          // the restricted hierarchy: assignment binds tighter than the
+          // other operators, so in `(x) := x + 1` the `+` is the top
+          // operator and `(x) := x` its lhs — with a plain $.expr lhs
+          // that would reopen the fusion this rule exists to prevent.
+          seq(alias($.expr_v1, $.expr), alias($.infix_operator_v1, $.infix_operator), $.expr),
+          // Assignment/unification only with a lhs that cannot be read
+          // as the argument list or key of a v0 rule named `if`.
+          seq(
+            alias($.expr_assign_lhs_v1, $.expr),
+            alias($.infix_operator_assign_v1, $.infix_operator),
+            $.expr,
+          ),
+        ),
+      ),
+
+    // The lhs shapes admissible for a top-level assignment in a v1
+    // unbraced body: everything except parenthesized expressions and
+    // array-initial terms (arrays, array comprehensions, memberships,
+    // and refs rooted at an array).
+    expr_assign_lhs_v1: $ =>
+      prec.left(
+        1,
+        choice(
+          alias($.term_assign_lhs_v1, $.term),
+          $.expr_call,
+          $.expr_unary,
+        ),
+      ),
+
+    term_assign_lhs_v1: $ =>
+      choice(
+        alias($.ref_assign_lhs_v1, $.ref),
+        $.var,
+        $.scalar,
+        $.object,
+        $.set,
+        $.object_compr,
+        $.set_compr,
+      ),
+
+    ref_assign_lhs_v1: $ =>
+      prec.left(
+        2,
+        seq(
+          choice(
+            $.var,
+            $.object,
+            $.set,
+            $.object_compr,
+            $.set_compr,
+            $.expr_call,
+          ),
+          repeat($.ref_arg),
+        ),
+      ),
+
+    infix_operator_assign_v1: $ => prec.left(2, $.assignment_operator),
+
+    // Follow-on bodies of a comp+if rule: else clauses (which may carry
+    // their own value) and further braced/literal bodies — but never a
+    // bare `:= term` value body, since the rule's value already lives in
+    // the head. Without this, `a := 1` + `if(x) := x` fused as head
+    // `a := 1 if`, first body `(x)`, second body `:= x`.
+    rule_body_v1_tail: $ =>
+      choice(
+        seq(
+          $.else,
+          optional(
+            seq(
+              $.assignment_operator,
+              $.term,
+            ),
+          ),
+          optional($.if),
+          choice(
+            $._braced_query,
+            $.literal,
+            seq(choice($.assignment, $.unification), $.term),
+          ),
+        ),
+        $._braced_query,
         $.literal,
+      ),
+
+    infix_operator_v1: $ =>
+      choice(
+        $.bool_operator,
+        $.arith_operator,
+        $.bin_operator,
       ),
 
     // rule-head-comp  = ( ":=" | "=" ) term
