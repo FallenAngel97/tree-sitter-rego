@@ -125,8 +125,41 @@ module.exports = grammar({
     // the regular expr rules.
     literal_v1: $ =>
       seq(
-        choice($.some_decl, alias($.expr_v1, $.expr), seq($.not, $.expr)),
+        choice(
+          $.some_decl,
+          alias($.expr_v1, $.expr),
+          seq($.not, $.expr),
+          $._logical_expr_v1,
+        ),
         repeat($.with_modifier),
+      ),
+
+    // A logical expression opening a v1 comp+if body. Only the leftmost operand
+    // needs the restricted hierarchy — same reasoning as expr_infix_v1.
+    _logical_expr_v1: $ =>
+      choice(
+        alias($.logical_and_v1, $.logical_and),
+        alias($.logical_or_v1, $.logical_or),
+        $.logical_group,
+        seq($.not, $.logical_group),
+      ),
+
+    logical_and_v1: $ => prec.left(5, seq($._logical_operand_v1, $.and, $._logical_operand)),
+
+    logical_or_v1: $ => prec.left(4, seq($._logical_operand_v1, $.or, $._logical_operand)),
+
+    _logical_operand_v1: $ =>
+      choice(
+        alias($.logical_and_v1, $.logical_and),
+        alias($.logical_or_v1, $.logical_or),
+        $._logical_atom_v1,
+      ),
+
+    _logical_atom_v1: $ =>
+      choice(
+        alias($.expr_v1, $.expr),
+        $.logical_group,
+        seq($.not, choice($.expr, $.logical_group)),
       ),
 
     expr_v1: $ =>
@@ -300,11 +333,69 @@ module.exports = grammar({
         ),
       ),
 
-    // literal         = ( some-decl | expr | "not" expr ) { with-modifier }
+    // literal         = ( some-decl | expr | "not" expr | logical-expr ) { with-modifier }
     literal: $ =>
       seq(
-        choice($.some_decl, $.expr, seq($.not, $.expr)),
+        choice($.some_decl, $.expr, seq($.not, $.expr), $._logical_expr),
         repeat($.with_modifier),
+      ),
+
+    // logical-expr    = logical-and | logical-or | logical-group | "not" logical-group
+    //
+    // The `and` / `or` future keywords sit at the literal level, not in `expr`:
+    // they combine bodies rather than terms, so `p := a or b` and `f(a or b)`
+    // are not valid Rego. Precedence, tightest first: not > and > or > with.
+    _logical_expr: $ =>
+      choice(
+        $.logical_and,
+        $.logical_or,
+        $.logical_group,
+        seq($.not, $.logical_group),
+      ),
+
+    // logical-and     = logical-operand "and" logical-operand
+    logical_and: $ => prec.left(5, seq($._logical_operand, $.and, $._logical_operand)),
+
+    // logical-or      = logical-operand "or" logical-operand
+    logical_or: $ => prec.left(4, seq($._logical_operand, $.or, $._logical_operand)),
+
+    _logical_operand: $ =>
+      choice(
+        $.logical_and,
+        $.logical_or,
+        $._logical_atom,
+      ),
+
+    // logical-operand = [ "not" ] ( expr | logical-group )
+    //
+    // OPA also allows a braced query (`{a; b} and c`). It is left out because a
+    // `{`-initial operand is indistinguishable from a set / object /
+    // comprehension term, which makes `count({x})` unparseable. Parens cover it.
+    _logical_atom: $ =>
+      choice(
+        $.expr,
+        $.logical_group,
+        seq($.not, choice($.expr, $.logical_group)),
+      ),
+
+    // logical-group   = "(" ( logical-and | logical-or | logical-group
+    //                       | expr with-modifier { with-modifier } ) ")"
+    //
+    // Parens regroup operands (`(a or b) and c`) and scope a `with` to a single
+    // operand (`(a with x as y) and b`) — the latter is required, since a
+    // trailing modifier binds to the whole expression and OPA rejects
+    // `a with x as y and b`. Requiring an `and`/`or` or a `with` inside keeps
+    // this disjoint from expr-parens, so `(a)` stays an ordinary expression.
+    logical_group: $ =>
+      seq(
+        $.open_paren,
+        choice(
+          $.logical_and,
+          $.logical_or,
+          $.logical_group,
+          seq($.expr, repeat1($.with_modifier)),
+        ),
+        $.close_paren,
       ),
 
     // with-modifier   = "with" term "as" term
@@ -674,6 +765,12 @@ module.exports = grammar({
 
     // not keyword
     not: $ => 'not',
+
+    // and keyword
+    and: $ => 'and',
+
+    // or keyword
+    or: $ => 'or',
 
     // with keyword
     with: $ => 'with',
