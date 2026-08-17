@@ -134,8 +134,9 @@ module.exports = grammar({
         repeat($.with_modifier),
       ),
 
-    // A logical expression opening a v1 comp+if body. Only the leftmost operand
-    // needs the restricted hierarchy — same reasoning as expr_infix_v1.
+    // A logical expression opening a v1 comp+if body. Only the leftmost
+    // operand needs the restricted hierarchy — same reasoning as
+    // expr_infix_v1 — so the right operand is a plain logical operand.
     _logical_expr_v1: $ =>
       choice(
         alias($.logical_and_v1, $.logical_and),
@@ -340,11 +341,25 @@ module.exports = grammar({
         repeat($.with_modifier),
       ),
 
-    // logical-expr    = logical-and | logical-or | logical-group | "not" logical-group
+    // The `and` / `or` logical operators (OPA future keywords `and` and `or`).
     //
-    // The `and` / `or` future keywords sit at the literal level, not in `expr`:
-    // they combine bodies rather than terms, so `p := a or b` and `f(a or b)`
-    // are not valid Rego. Precedence, tightest first: not > and > or > with.
+    // These live at the literal level, not inside `expr`: they combine
+    // *bodies*, not terms, so `p := a or b`, `f(a or b)` and `a[x or y]` are
+    // not valid Rego — an `and`/`or` may only appear where a query literal
+    // may. Precedence, tightest binding first:
+    //
+    //     not > and > or > with
+    //
+    // Both operators are left-associative, and `and`'s higher precedence is
+    // what makes it bind tighter than `or`; the values sit above every other
+    // precedence in the grammar so the logical layer resolves on its own.
+    // `not` binding tighter than both needs no declaration at all: it prefixes
+    // an `expr`, and `and`/`or` are not part of `expr`, so `not x and y` can
+    // only be `(not x) and y`.
+    //
+    // A whole logical expression may also stand alone as a literal, either
+    // parenthesized (`(a or b)`) or negated (`not (a or b)`) — the bare form
+    // is already covered by logical_and / logical_or.
     _logical_expr: $ =>
       choice(
         $.logical_and,
@@ -370,7 +385,8 @@ module.exports = grammar({
     //
     // OPA also allows a braced query (`{a; b} and c`). It is left out because a
     // `{`-initial operand is indistinguishable from a set / object /
-    // comprehension term, which makes `count({x})` unparseable. Parens cover it.
+    // comprehension term, which makes `count({x})` unparseable. Parentheses
+    // cover the same ground.
     _logical_atom: $ =>
       choice(
         $.expr,
@@ -381,11 +397,14 @@ module.exports = grammar({
     // logical-group   = "(" ( logical-and | logical-or | logical-group
     //                       | expr with-modifier { with-modifier } ) ")"
     //
-    // Parens regroup operands (`(a or b) and c`) and scope a `with` to a single
-    // operand (`(a with x as y) and b`) — the latter is required, since a
-    // trailing modifier binds to the whole expression and OPA rejects
-    // `a with x as y and b`. Requiring an `and`/`or` or a `with` inside keeps
-    // this disjoint from expr-parens, so `(a)` stays an ordinary expression.
+    // Parentheses regroup operands (`(a or b) and c`) and scope a `with` to a
+    // single operand (`(a with x as y) and b`) — the latter is required, since a
+    // trailing modifier binds to the whole expression, and OPA rejects
+    // `a with x as y and b` outright ("`with` modifier is not allowed on
+    // operand of `and`"). Requiring an `and`/`or` or a `with` inside is what
+    // keeps the group disjoint from the pre-existing expr_parens term — `(a)`
+    // and `(not a)` are still an ordinary parenthesized expression, matching
+    // OPA, which collapses redundant parentheses around a single operand.
     logical_group: $ =>
       seq(
         $.open_paren,

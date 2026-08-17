@@ -301,7 +301,7 @@ p if x or not y
                     (var)))))))))))
 
 ================================================================================
-paren group regroups the left operand
+parenthesized group regroups the left operand
 ================================================================================
 
 package p
@@ -343,7 +343,7 @@ p if (a or b) and c
                     (var)))))))))))
 
 ================================================================================
-paren group regroups the right operand
+parenthesized group regroups the right operand
 ================================================================================
 
 package p
@@ -385,7 +385,7 @@ p if a and (b or c)
                 (close_paren)))))))))
 
 ================================================================================
-nested paren groups
+nested parenthesized groups
 ================================================================================
 
 package p
@@ -424,7 +424,7 @@ p if ((a or b))
               (close_paren))))))))
 
 ================================================================================
-not applied to a paren group
+not applied to a parenthesized group
 ================================================================================
 
 package p
@@ -461,7 +461,7 @@ p if not (a or b)
               (close_paren))))))))
 
 ================================================================================
-paren group as the whole body
+parenthesized group as the whole body
 ================================================================================
 
 package p
@@ -1141,3 +1141,91 @@ set_union_operand if input.c or (input.a | input.b with input.x as 1)
                     (scalar
                       (number))))
                 (close_paren)))))))))
+
+================================================================================
+brace-led comprehension as a call argument
+================================================================================
+
+package p
+
+p if {
+	count({x | s[x]; f(x)}) == 0 and input.y
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (if))
+        (rule_body
+          (open_curly)
+          (query
+            (literal
+              (logical_and
+                (expr
+                  (expr_infix
+                    (expr
+                      (term
+                        (ref
+                          (expr_call
+                            (fn_name
+                              (var))
+                            (open_paren)
+                            (fn_args
+                              (expr
+                                (term
+                                  (ref
+                                    (set_compr
+                                      (open_curly)
+                                      (term
+                                        (ref
+                                          (var)))
+                                      (query
+                                        (literal
+                                          (expr
+                                            (term
+                                              (ref
+                                                (var)
+                                                (ref_arg
+                                                  (ref_arg_brack
+                                                    (open_bracket)
+                                                    (var)
+                                                    (close_bracket)))))))
+                                        (literal
+                                          (expr
+                                            (term
+                                              (ref
+                                                (expr_call
+                                                  (fn_name
+                                                    (var))
+                                                  (open_paren)
+                                                  (fn_args
+                                                    (expr
+                                                      (term
+                                                        (ref
+                                                          (var)))))
+                                                  (close_paren)))))))
+                                      (close_curly))))))
+                            (close_paren)))))
+                    (infix_operator
+                      (bool_operator))
+                    (expr
+                      (term
+                        (scalar
+                          (number))))))
+                (and)
+                (expr
+                  (term
+                    (ref
+                      (var)
+                      (ref_arg
+                        (ref_arg_dot
+                          (var)))))))))
+          (close_curly))))))
