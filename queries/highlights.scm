@@ -11,6 +11,8 @@
   (some)
   (in)
   (not)
+  (and)
+  (or)
   (if)
   (contains)
   (else)

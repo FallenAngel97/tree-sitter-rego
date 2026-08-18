@@ -409,6 +409,18 @@
           "named": true
         },
         {
+          "type": "logical_and",
+          "named": true
+        },
+        {
+          "type": "logical_group",
+          "named": true
+        },
+        {
+          "type": "logical_or",
+          "named": true
+        },
+        {
           "type": "not",
           "named": true
         },
@@ -418,6 +430,115 @@
         },
         {
           "type": "with_modifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "logical_and",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "and",
+          "named": true
+        },
+        {
+          "type": "expr",
+          "named": true
+        },
+        {
+          "type": "logical_and",
+          "named": true
+        },
+        {
+          "type": "logical_group",
+          "named": true
+        },
+        {
+          "type": "logical_or",
+          "named": true
+        },
+        {
+          "type": "not",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "logical_group",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "close_paren",
+          "named": true
+        },
+        {
+          "type": "expr",
+          "named": true
+        },
+        {
+          "type": "logical_and",
+          "named": true
+        },
+        {
+          "type": "logical_group",
+          "named": true
+        },
+        {
+          "type": "logical_or",
+          "named": true
+        },
+        {
+          "type": "open_paren",
+          "named": true
+        },
+        {
+          "type": "with_modifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "logical_or",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "expr",
+          "named": true
+        },
+        {
+          "type": "logical_and",
+          "named": true
+        },
+        {
+          "type": "logical_group",
+          "named": true
+        },
+        {
+          "type": "logical_or",
+          "named": true
+        },
+        {
+          "type": "not",
+          "named": true
+        },
+        {
+          "type": "or",
           "named": true
         }
       ]
@@ -1238,6 +1359,10 @@
     "named": false
   },
   {
+    "type": "and",
+    "named": true
+  },
+  {
     "type": "as",
     "named": true
   },
@@ -1308,6 +1433,10 @@
   },
   {
     "type": "open_paren",
+    "named": true
+  },
+  {
+    "type": "or",
     "named": true
   },
   {

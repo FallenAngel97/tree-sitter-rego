@@ -1,0 +1,1231 @@
+================================================================================
+and expression
+================================================================================
+
+package p
+
+allow if input.admin and input.active
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (if))
+        (rule_body
+          (literal
+            (logical_and
+              (expr
+                (term
+                  (ref
+                    (var)
+                    (ref_arg
+                      (ref_arg_dot
+                        (var))))))
+              (and)
+              (expr
+                (term
+                  (ref
+                    (var)
+                    (ref_arg
+                      (ref_arg_dot
+                        (var)))))))))))))
+
+================================================================================
+or expression
+================================================================================
+
+package p
+
+allow if input.admin or input.owner
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (if))
+        (rule_body
+          (literal
+            (logical_or
+              (expr
+                (term
+                  (ref
+                    (var)
+                    (ref_arg
+                      (ref_arg_dot
+                        (var))))))
+              (or)
+              (expr
+                (term
+                  (ref
+                    (var)
+                    (ref_arg
+                      (ref_arg_dot
+                        (var)))))))))))))
+
+================================================================================
+and binds tighter than or
+================================================================================
+
+package p
+
+p if x or y and z
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (if))
+        (rule_body
+          (literal
+            (logical_or
+              (expr
+                (term
+                  (ref
+                    (var))))
+              (or)
+              (logical_and
+                (expr
+                  (term
+                    (ref
+                      (var))))
+                (and)
+                (expr
+                  (term
+                    (ref
+                      (var))))))))))))
+
+================================================================================
+and binds tighter than or on the left
+================================================================================
+
+package p
+
+p if x and y or z
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (if))
+        (rule_body
+          (literal
+            (logical_or
+              (logical_and
+                (expr
+                  (term
+                    (ref
+                      (var))))
+                (and)
+                (expr
+                  (term
+                    (ref
+                      (var)))))
+              (or)
+              (expr
+                (term
+                  (ref
+                    (var)))))))))))
+
+================================================================================
+and is left associative
+================================================================================
+
+package p
+
+p if x and y and z
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (if))
+        (rule_body
+          (literal
+            (logical_and
+              (logical_and
+                (expr
+                  (term
+                    (ref
+                      (var))))
+                (and)
+                (expr
+                  (term
+                    (ref
+                      (var)))))
+              (and)
+              (expr
+                (term
+                  (ref
+                    (var)))))))))))
+
+================================================================================
+or is left associative
+================================================================================
+
+package p
+
+p if x or y or z
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (if))
+        (rule_body
+          (literal
+            (logical_or
+              (logical_or
+                (expr
+                  (term
+                    (ref
+                      (var))))
+                (or)
+                (expr
+                  (term
+                    (ref
+                      (var)))))
+              (or)
+              (expr
+                (term
+                  (ref
+                    (var)))))))))))
+
+================================================================================
+not binds tighter than and
+================================================================================
+
+package p
+
+p if not x and y
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (if))
+        (rule_body
+          (literal
+            (logical_and
+              (not)
+              (expr
+                (term
+                  (ref
+                    (var))))
+              (and)
+              (expr
+                (term
+                  (ref
+                    (var)))))))))))
+
+================================================================================
+not on the right operand
+================================================================================
+
+package p
+
+p if x or not y
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (if))
+        (rule_body
+          (literal
+            (logical_or
+              (expr
+                (term
+                  (ref
+                    (var))))
+              (or)
+              (not)
+              (expr
+                (term
+                  (ref
+                    (var)))))))))))
+
+================================================================================
+parenthesized group regroups the left operand
+================================================================================
+
+package p
+
+p if (a or b) and c
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (if))
+        (rule_body
+          (literal
+            (logical_and
+              (logical_group
+                (open_paren)
+                (logical_or
+                  (expr
+                    (term
+                      (ref
+                        (var))))
+                  (or)
+                  (expr
+                    (term
+                      (ref
+                        (var)))))
+                (close_paren))
+              (and)
+              (expr
+                (term
+                  (ref
+                    (var)))))))))))
+
+================================================================================
+parenthesized group regroups the right operand
+================================================================================
+
+package p
+
+p if a and (b or c)
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (if))
+        (rule_body
+          (literal
+            (logical_and
+              (expr
+                (term
+                  (ref
+                    (var))))
+              (and)
+              (logical_group
+                (open_paren)
+                (logical_or
+                  (expr
+                    (term
+                      (ref
+                        (var))))
+                  (or)
+                  (expr
+                    (term
+                      (ref
+                        (var)))))
+                (close_paren)))))))))
+
+================================================================================
+nested parenthesized groups
+================================================================================
+
+package p
+
+p if ((a or b))
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (if))
+        (rule_body
+          (literal
+            (logical_group
+              (open_paren)
+              (logical_group
+                (open_paren)
+                (logical_or
+                  (expr
+                    (term
+                      (ref
+                        (var))))
+                  (or)
+                  (expr
+                    (term
+                      (ref
+                        (var)))))
+                (close_paren))
+              (close_paren))))))))
+
+================================================================================
+not applied to a parenthesized group
+================================================================================
+
+package p
+
+p if not (a or b)
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (if))
+        (rule_body
+          (literal
+            (not)
+            (logical_group
+              (open_paren)
+              (logical_or
+                (expr
+                  (term
+                    (ref
+                      (var))))
+                (or)
+                (expr
+                  (term
+                    (ref
+                      (var)))))
+              (close_paren))))))))
+
+================================================================================
+parenthesized group as the whole body
+================================================================================
+
+package p
+
+p if (a or b)
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (if))
+        (rule_body
+          (literal
+            (logical_group
+              (open_paren)
+              (logical_or
+                (expr
+                  (term
+                    (ref
+                      (var))))
+                (or)
+                (expr
+                  (term
+                    (ref
+                      (var)))))
+              (close_paren))))))))
+
+================================================================================
+with modifier applies to the whole logical expression
+================================================================================
+
+package p
+
+p if a and b with input as v
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (if))
+        (rule_body
+          (literal
+            (logical_and
+              (expr
+                (term
+                  (ref
+                    (var))))
+              (and)
+              (expr
+                (term
+                  (ref
+                    (var)))))
+            (with_modifier
+              (with)
+              (term
+                (ref
+                  (var)))
+              (as)
+              (term
+                (ref
+                  (var))))))))))
+
+================================================================================
+logical operators in a braced body
+================================================================================
+
+package p
+
+allow if {
+	input.method == "GET"
+	input.user.admin or input.user.owner
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (if))
+        (rule_body
+          (open_curly)
+          (query
+            (literal
+              (expr
+                (expr_infix
+                  (expr
+                    (term
+                      (ref
+                        (var)
+                        (ref_arg
+                          (ref_arg_dot
+                            (var))))))
+                  (infix_operator
+                    (bool_operator))
+                  (expr
+                    (term
+                      (scalar
+                        (string
+                          (quoted_string))))))))
+            (literal
+              (logical_or
+                (expr
+                  (term
+                    (ref
+                      (var)
+                      (ref_arg
+                        (ref_arg_dot
+                          (var)))
+                      (ref_arg
+                        (ref_arg_dot
+                          (var))))))
+                (or)
+                (expr
+                  (term
+                    (ref
+                      (var)
+                      (ref_arg
+                        (ref_arg_dot
+                          (var)))
+                      (ref_arg
+                        (ref_arg_dot
+                          (var)))))))))
+          (close_curly))))))
+
+================================================================================
+v1 comp rule with logical body
+================================================================================
+
+package p
+
+allow := true if input.admin or input.owner
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (rule_head_comp
+            (assignment_operator
+              (assignment))
+            (term
+              (scalar
+                (boolean))))
+          (if))
+        (rule_body
+          (literal
+            (logical_or
+              (expr
+                (term
+                  (ref
+                    (var)
+                    (ref_arg
+                      (ref_arg_dot
+                        (var))))))
+              (or)
+              (expr
+                (term
+                  (ref
+                    (var)
+                    (ref_arg
+                      (ref_arg_dot
+                        (var)))))))))))))
+
+================================================================================
+logical operators with membership and comparison operands
+================================================================================
+
+package p
+
+deny contains msg if msg in errors and count(errors) > 0
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (contains)
+          (term
+            (ref
+              (var)))
+          (if))
+        (rule_body
+          (literal
+            (logical_and
+              (expr
+                (term
+                  (membership
+                    (term
+                      (ref
+                        (var)))
+                    (in)
+                    (term
+                      (ref
+                        (var))))))
+              (and)
+              (expr
+                (term
+                  (ref
+                    (var)))))))
+        (rule_body
+          (literal
+            (expr
+              (expr_infix
+                (expr
+                  (expr_parens
+                    (open_paren)
+                    (expr
+                      (term
+                        (ref
+                          (var))))
+                    (close_paren)))
+                (infix_operator
+                  (bool_operator))
+                (expr
+                  (term
+                    (scalar
+                      (number))))))))))))
+
+================================================================================
+v0 braced body with or
+================================================================================
+
+package p
+
+allow {
+	x or y
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var))
+        (rule_body
+          (open_curly)
+          (query
+            (literal
+              (logical_or
+                (expr
+                  (term
+                    (ref
+                      (var))))
+                (or)
+                (expr
+                  (term
+                    (ref
+                      (var)))))))
+          (close_curly))))))
+
+================================================================================
+and and or as reference names
+================================================================================
+
+package p
+
+p if input.and or input.or
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (if))
+        (rule_body
+          (literal
+            (logical_or
+              (expr
+                (term
+                  (ref
+                    (var)
+                    (ref_arg
+                      (ref_arg_dot
+                        (var))))))
+              (or)
+              (expr
+                (term
+                  (ref
+                    (var)
+                    (ref_arg
+                      (ref_arg_dot
+                        (var)))))))))))))
+
+================================================================================
+paren-scoped with on the left operand
+================================================================================
+
+package p
+
+lhs_operand if (input.a with input.x as 1) and input.b
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (if))
+        (rule_body
+          (literal
+            (logical_and
+              (logical_group
+                (open_paren)
+                (expr
+                  (term
+                    (ref
+                      (var)
+                      (ref_arg
+                        (ref_arg_dot
+                          (var))))))
+                (with_modifier
+                  (with)
+                  (term
+                    (ref
+                      (var)
+                      (ref_arg
+                        (ref_arg_dot
+                          (var)))))
+                  (as)
+                  (term
+                    (scalar
+                      (number))))
+                (close_paren))
+              (and)
+              (expr
+                (term
+                  (ref
+                    (var)
+                    (ref_arg
+                      (ref_arg_dot
+                        (var)))))))))))))
+
+================================================================================
+paren-scoped with on the right operand
+================================================================================
+
+package p
+
+rhs_operand if input.a and (input.b with input.x as 1)
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (if))
+        (rule_body
+          (literal
+            (logical_and
+              (expr
+                (term
+                  (ref
+                    (var)
+                    (ref_arg
+                      (ref_arg_dot
+                        (var))))))
+              (and)
+              (logical_group
+                (open_paren)
+                (expr
+                  (term
+                    (ref
+                      (var)
+                      (ref_arg
+                        (ref_arg_dot
+                          (var))))))
+                (with_modifier
+                  (with)
+                  (term
+                    (ref
+                      (var)
+                      (ref_arg
+                        (ref_arg_dot
+                          (var)))))
+                  (as)
+                  (term
+                    (scalar
+                      (number))))
+                (close_paren)))))))))
+
+================================================================================
+paren-scoped with on both operands
+================================================================================
+
+package p
+
+both_operands if (input.a with input.x as 1) or (input.b with input.y as 2)
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (if))
+        (rule_body
+          (literal
+            (logical_or
+              (logical_group
+                (open_paren)
+                (expr
+                  (term
+                    (ref
+                      (var)
+                      (ref_arg
+                        (ref_arg_dot
+                          (var))))))
+                (with_modifier
+                  (with)
+                  (term
+                    (ref
+                      (var)
+                      (ref_arg
+                        (ref_arg_dot
+                          (var)))))
+                  (as)
+                  (term
+                    (scalar
+                      (number))))
+                (close_paren))
+              (or)
+              (logical_group
+                (open_paren)
+                (expr
+                  (term
+                    (ref
+                      (var)
+                      (ref_arg
+                        (ref_arg_dot
+                          (var))))))
+                (with_modifier
+                  (with)
+                  (term
+                    (ref
+                      (var)
+                      (ref_arg
+                        (ref_arg_dot
+                          (var)))))
+                  (as)
+                  (term
+                    (scalar
+                      (number))))
+                (close_paren)))))))))
+
+================================================================================
+paren-scoped with operand and a trailing with on the expression
+================================================================================
+
+package p
+
+operand_and_expression if input.a and (input.b with input.x as 1) with input.y as 2
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (if))
+        (rule_body
+          (literal
+            (logical_and
+              (expr
+                (term
+                  (ref
+                    (var)
+                    (ref_arg
+                      (ref_arg_dot
+                        (var))))))
+              (and)
+              (logical_group
+                (open_paren)
+                (expr
+                  (term
+                    (ref
+                      (var)
+                      (ref_arg
+                        (ref_arg_dot
+                          (var))))))
+                (with_modifier
+                  (with)
+                  (term
+                    (ref
+                      (var)
+                      (ref_arg
+                        (ref_arg_dot
+                          (var)))))
+                  (as)
+                  (term
+                    (scalar
+                      (number))))
+                (close_paren)))
+            (with_modifier
+              (with)
+              (term
+                (ref
+                  (var)
+                  (ref_arg
+                    (ref_arg_dot
+                      (var)))))
+              (as)
+              (term
+                (scalar
+                  (number))))))))))
+
+================================================================================
+not applied to a paren-scoped with operand
+================================================================================
+
+package p
+
+negated_with_operand if not (input.a with input.x as 1)
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (if))
+        (rule_body
+          (literal
+            (not)
+            (logical_group
+              (open_paren)
+              (expr
+                (term
+                  (ref
+                    (var)
+                    (ref_arg
+                      (ref_arg_dot
+                        (var))))))
+              (with_modifier
+                (with)
+                (term
+                  (ref
+                    (var)
+                    (ref_arg
+                      (ref_arg_dot
+                        (var)))))
+                (as)
+                (term
+                  (scalar
+                    (number))))
+              (close_paren))))))))
+
+================================================================================
+paren-scoped with on a set union operand
+================================================================================
+
+package p
+
+set_union_operand if input.c or (input.a | input.b with input.x as 1)
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (if))
+        (rule_body
+          (literal
+            (logical_or
+              (expr
+                (term
+                  (ref
+                    (var)
+                    (ref_arg
+                      (ref_arg_dot
+                        (var))))))
+              (or)
+              (logical_group
+                (open_paren)
+                (expr
+                  (expr_infix
+                    (expr
+                      (term
+                        (ref
+                          (var)
+                          (ref_arg
+                            (ref_arg_dot
+                              (var))))))
+                    (infix_operator
+                      (bin_operator))
+                    (expr
+                      (term
+                        (ref
+                          (var)
+                          (ref_arg
+                            (ref_arg_dot
+                              (var))))))))
+                (with_modifier
+                  (with)
+                  (term
+                    (ref
+                      (var)
+                      (ref_arg
+                        (ref_arg_dot
+                          (var)))))
+                  (as)
+                  (term
+                    (scalar
+                      (number))))
+                (close_paren)))))))))
+
+================================================================================
+brace-led comprehension as a call argument
+================================================================================
+
+package p
+
+p if {
+	count({x | s[x]; f(x)}) == 0 and input.y
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (module
+    (package)
+    (ref
+      (var))
+    (policy
+      (rule
+        (rule_head
+          (var)
+          (if))
+        (rule_body
+          (open_curly)
+          (query
+            (literal
+              (logical_and
+                (expr
+                  (expr_infix
+                    (expr
+                      (term
+                        (ref
+                          (expr_call
+                            (fn_name
+                              (var))
+                            (open_paren)
+                            (fn_args
+                              (expr
+                                (term
+                                  (ref
+                                    (set_compr
+                                      (open_curly)
+                                      (term
+                                        (ref
+                                          (var)))
+                                      (query
+                                        (literal
+                                          (expr
+                                            (term
+                                              (ref
+                                                (var)
+                                                (ref_arg
+                                                  (ref_arg_brack
+                                                    (open_bracket)
+                                                    (var)
+                                                    (close_bracket)))))))
+                                        (literal
+                                          (expr
+                                            (term
+                                              (ref
+                                                (expr_call
+                                                  (fn_name
+                                                    (var))
+                                                  (open_paren)
+                                                  (fn_args
+                                                    (expr
+                                                      (term
+                                                        (ref
+                                                          (var)))))
+                                                  (close_paren)))))))
+                                      (close_curly))))))
+                            (close_paren)))))
+                    (infix_operator
+                      (bool_operator))
+                    (expr
+                      (term
+                        (scalar
+                          (number))))))
+                (and)
+                (expr
+                  (term
+                    (ref
+                      (var)
+                      (ref_arg
+                        (ref_arg_dot
+                          (var)))))))))
+          (close_curly))))))
